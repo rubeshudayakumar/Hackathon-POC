@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="4936f7c0475f2e105446f19f016d4302" extends="sys_self_registered_user_profile" label="Hacktaho Self Reg User Profile 764977" max_length="40" name="x_1097288_hacktaho_self_reg_user_profile_764977" type="collection"/>
+</database>

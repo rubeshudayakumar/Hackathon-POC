@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="b836b7c0475f2e105446f19f016d43a9" extends="user_activation_request" label="Hacktaho User Acti Req 764977" max_length="40" name="x_1097288_hacktaho_user_acti_req_764977" type="collection"/>
+</database>

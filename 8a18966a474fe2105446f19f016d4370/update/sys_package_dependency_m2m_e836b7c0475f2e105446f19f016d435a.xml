@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_package_dependency_m2m">
+    <sys_package_dependency_m2m action="INSERT_OR_UPDATE">
+        <dependency display_value="External User Self-Registration" source="com.snc.external_user_self_registration">4b8a680847dbea105446f19f016d4303</dependency>
+        <min_version>1.0.0</min_version>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-07 04:09:42</sys_created_on>
+        <sys_id>e836b7c0475f2e105446f19f016d435a</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-07 04:09:42</sys_updated_on>
+    </sys_package_dependency_m2m>
+</record_update>

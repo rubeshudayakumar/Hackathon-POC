@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function($scope) {
+  var c = this;
+
+  // ----- Wizard steps -----
+  c.steps = [
+    { key: 'new',      label: 'New' },
+    { key: 'details',  label: 'Hackathon Details' },
+    { key: 'duration', label: 'Duration' },
+    { key: 'rules',    label: 'Rules' }
+  ];
+  c.stepIndex = 0;
+
+  // ----- Record picker field (sn-record-picker expects a 'field' object) -----
+  c.userField = { name: 'user', value: '', displayValue: '' }; // value = sys_id
+
+  // ----- Form model (use your custom table field names) -----
+  c.form = {
+    name: '',                       // display name (for UI/validation only)
+    email: '',
+    hackathon_name: '',
+    hackathon_registration: '',
+    start_date_time: '',
+    end_date_time: '',
+    rules: ''
+  };
+
+  // ----- UI state -----
+  c.state = { submitting:false, done:false, error:'', record:null };
+  c.dateError = false;
+
+  // ----- sn-record-picker -> capture user sys_id + display and fetch email -----
+  $scope.$on('field.change', function(evt, parms) {
+    if (parms && parms.field && parms.field.name === 'user') {
+      c.userField.value = parms.newValue || ''; // sys_id
+      c.userField.displayValue = parms.displayValue || parms.field.displayValue || '';
+      c.form.name = c.userField.displayValue || ''; // keep for UI/validation
+
+      if (c.userField.value) {
+        c.server.get({ action:'get_user_email', sys_id: c.userField.value })
+          .then(function(resp){ c.form.email = (resp.data && resp.data.email) || ''; });
+      } else {
+        c.form.email = '';
+      }
+      $scope.$applyAsync();
+    }
+  });
+
+  // ----- Navigation -----
+  c.prev = function() {
+    if (c.state.done || c.state.submitting) return;
+    if (c.stepIndex > 0) c.stepIndex--;
+  };
+
+  c._validateCurrent = function() {
+    if (c.stepIndex === 0) {
+      if (!c.form.name)  return 'Name is required';
+      if (!c.form.email) return 'Email is required (auto-fill failed)';
+    }
+    if (c.stepIndex === 1 && !c.form.hackathon_name) return 'Hackathon name is required';
+    if (c.stepIndex === 2) {
+      if (!c.form.start_date_time || !c.form.end_date_time) return 'Start and End date/time are required';
+      try {
+        var s = new Date(c.form.start_date_time), e = new Date(c.form.end_date_time);
+        c.dateError = e < s; if (c.dateError) return 'End must be after Start';
+      } catch(e){}
+    }
+    return '';
+  };
+  c.canNext   = function(){ return !c._validateCurrent(); };
+  c.canSubmit = function(){ return !c._validateCurrent(); };
+
+  c.next = function(){
+    if (c.state.done || c.state.submitting) return;
+    var err = c._validateCurrent(); c.state.error = err || '';
+    if (!err && c.stepIndex < c.steps.length - 1) c.stepIndex++;
+  };
+
+  // ----- Submit → create record in x_1097288_hacktaho_hackathon_registration -----
+  c.submit = function(){
+    if (c.state.done || c.state.submitting) return;
+    var err = c._validateCurrent(); c.state.error = err || ''; if (err) return;
+
+    c.state.submitting = true;
+
+    // IMPORTANT: include user sys_id for the 'name' reference
+    var payload = angular.extend({}, c.form, {
+      user_sys_id: c.userField.value,          // <-- reference value
+      user_display: c.userField.displayValue   // optional, for logging
+    });
+
+    c.server.get({ action: 'create_registration', payload: payload })
+      .then(function(resp){
+        if (resp.data && resp.data.error) { c.state.error = resp.data.error; return; }
+        c.state.record = resp.data && resp.data.record ? resp.data.record : null;
+        if (c.state.record) c.state.done = true; // freeze buttons
+      })
+      .catch(function(){
+        c.state.error = 'Failed to create registration';
+      })
+      .finally(function(){
+        c.state.submitting = false;
+      });
+  };
+};
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.hw-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }&#13;
+.hw-title { margin-top: 0; margin-bottom: 16px; }&#13;
+.hw-steps { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }&#13;
+.hw-step { padding: 8px 12px; border-radius: 16px; background: #e9ecef; font-weight: 600; }&#13;
+.hw-step.active { background: #13854e; color: #fff; }&#13;
+.hw-step.done { background: #58a67a; color: #fff; }&#13;
+.hw-panel { margin-top: 8px; }&#13;
+.m-t-16 { margin-top: 16px; }&#13;
+.m-t-8 { margin-top: 8px; }&#13;
+.hw-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id/>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Hackathon Registration</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  data.error = '';
+  if (!input) return;
+
+  // Normalize HTML5 datetime-local ('YYYY-MM-DDTHH:mm') to instance display format
+  function toDisplay(v) {
+    if (!v) return '';
+    var s = ('' + v).replace('T', ' ');
+    if (s.length === 16) s += ':00'; // add seconds if missing
+    return s;
+  }
+
+  try {
+    // --- Email lookup for selected user (sys_id) ---
+    if (input.action === 'get_user_email') {
+      var u = new GlideRecord('sys_user');
+      data.email = (u.get(String(input.sys_id)) ? String(u.getValue('email')) : '');
+      return;
+    }
+
+    // --- Create registration in custom table ---
+    if (input.action === 'create_registration') {
+      var p = input.payload || {};
+
+      // Server-side validation
+      if (!p.user_sys_id && !p.name) throw 'Name is required';
+      if (!p.email) throw 'Email is required';
+      if (!p.hackathon_name) throw 'Hackathon name is required';
+      if (!p.start_date_time || !p.end_date_time) throw 'Start and End date/time are required';
+
+      var sdt = new GlideDateTime(); sdt.setDisplayValue(toDisplay(p.start_date_time));
+      var edt = new GlideDateTime(); edt.setDisplayValue(toDisplay(p.end_date_time));
+      if (edt.getNumericValue() < sdt.getNumericValue())
+        throw 'End date/time must be after Start date/time';
+
+      var gr = new GlideRecord('x_1097288_hacktaho_hackathon_registration');
+      gr.initialize();
+
+      // 'name' is a reference to sys_user in your table; set sys_id, not label
+      var nameIsRef = false;
+      try { nameIsRef = gr.getElement('name').getED().getInternalType() === 'reference'; } catch(e) {}
+
+      var userSysId = String(p.user_sys_id || '');
+
+      // Safety fallback: if no sys_id but we have a display name, try lookup by name
+      if (!userSysId && p.name) {
+        var u = new GlideRecord('sys_user');
+        u.addQuery('name', p.name);
+        u.setLimit(1);
+        u.query();
+        if (u.next()) userSysId = '' + u.getUniqueValue();
+      }
+
+      if (nameIsRef) {
+        if (!userSysId) throw 'User (sys_id) is required for reference field "name"';
+        gr.setValue('name', userSysId);              // correct: reference expects sys_id
+      } else {
+        gr.setValue('name', p.name || p.user_display || '');
+      }
+
+      // Straight mappings
+      gr.setValue('email',                   p.email);
+      gr.setValue('hackathon_name',          p.hackathon_name);
+      gr.setValue('hackathon_registration',  p.hackathon_registration || '');
+      gr.setValue('start_date_time',         sdt);
+      gr.setValue('end_date_time',           edt);
+      gr.setValue('rules',                   p.rules || '');
+
+      var id = gr.insert();
+
+      // Return something nice to show in the banner
+      var display =
+        (gr.isValidField('number') && gr.getValue('number')) ? String(gr.getValue('number')) :
+        (gr.getDisplayValue() || String(id));
+
+      data.record = { sys_id: String(id), display: display };
+      return;
+    }
+
+    data.error = 'Unsupported action';
+
+  } catch (e) {
+    data.error = String(e);
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-21 08:48:40</sys_created_on>
+        <sys_id>eb4cb87c47e322105446f19f016d43f7</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>Hackathon Registration</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_eb4cb87c47e322105446f19f016d43f7</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-21 10:59:46</sys_updated_on>
+        <template><![CDATA[<div class="hw-card">
+
+  <h3 class="hw-title">Hackathon Wizard</h3>
+
+  <!-- Stepper -->
+  <div class="hw-steps">
+    <div ng-repeat="s in c.steps track by $index"
+         class="hw-step"
+         ng-class="{'active': $index === c.stepIndex, 'done': $index < c.stepIndex}">
+      <span>{{$index + 1}}. {{s.label}}</span>
+    </div>
+  </div>
+
+  <!-- Only error banner -->
+  <div class="alert alert-danger" ng-if="c.state.error">{{c.state.error}}</div>
+
+  <!-- Step: New -->
+  <div ng-if="c.stepIndex === 0" class="hw-panel">
+    <label class="control-label">Name <span class="text-danger">*</span></label>
+    <sn-record-picker
+      field="c.userField"
+      table="'sys_user'"
+      display-field="'name'"
+      value-field="'sys_id'"
+      search-fields="'name,email'"
+      page-size="50"
+      default-query="'active=true'">
+    </sn-record-picker>
+
+    <label class="control-label m-t-16">Email <span class="text-danger">*</span></label>
+    <input class="form-control" type="email" ng-model="c.form.email" placeholder="auto-filled from user" readonly />
+  </div>
+
+  <!-- Step: Hackathon Details -->
+  <div ng-if="c.stepIndex === 1" class="hw-panel">
+    <label class="control-label">Hackathon name <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" ng-model="c.form.hackathon_name" maxlength="200" />
+    <label class="control-label m-t-16">Hackathon details</label>
+    <textarea class="form-control" rows="5" ng-model="c.form.hackathon_registration"></textarea>
+  </div>
+
+  <!-- Step: Duration -->
+  <div ng-if="c.stepIndex === 2" class="hw-panel">
+    <label class="control-label">Start date/time <span class="text-danger">*</span></label>
+    <input class="form-control" type="datetime-local" ng-model="c.form.start_date_time" />
+    <label class="control-label m-t-16">End date/time <span class="text-danger">*</span></label>
+    <input class="form-control" type="datetime-local" ng-model="c.form.end_date_time" />
+    <div class="text-danger m-t-8" ng-if="c.dateError">End date must be after Start date</div>
+  </div>
+
+  <!-- Step: Rules -->
+  <div ng-if="c.stepIndex === 3" class="hw-panel">
+    <label class="control-label">Rules</label>
+    <textarea class="form-control" rows="6" ng-model="c.form.rules"></textarea>
+  </div>
+
+  <!-- Footer Actions (disabled after submit) -->
+  <div class="hw-footer">
+    <button class="btn btn-default"
+            ng-disabled="c.stepIndex===0 || c.state.submitting || c.state.done"
+            ng-click="c.prev()">
+      Back
+    </button>
+
+    <button class="btn btn-primary"
+            ng-show="c.stepIndex < c.steps.length-1"
+            ng-disabled="!c.canNext() || c.state.submitting || c.state.done"
+            ng-click="c.next()">
+      Next
+    </button>
+
+    <button class="btn btn-success"
+            ng-show="c.stepIndex === c.steps.length-1"
+            ng-disabled="!c.canSubmit() || c.state.submitting || c.state.done"
+            ng-click="c.submit()">
+      {{ c.state.submitting ? 'Submitting…' : 'Submit' }}
+    </button>
+  </div>
+
+  <!-- Success banner with link in Service Portal -->
+  <div class="alert alert-info m-t-16" ng-if="c.state.record">
+    Registration
+    <a class="alert-link"
+       ng-href="?id=form&table=x_1097288_hacktaho_hackathon_registration&sys_id={{c.state.record.sys_id}}">
+      {{c.state.record.display}}
+    </a>
+    created.
+  </div>
+
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

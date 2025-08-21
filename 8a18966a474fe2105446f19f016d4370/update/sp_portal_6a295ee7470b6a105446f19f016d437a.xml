@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_portal">
+    <sp_portal action="INSERT_OR_UPDATE">
+        <alternate_portal/>
+        <communication_channels/>
+        <css_variables/>
+        <dark_theme/>
+        <default>false</default>
+        <enable_ais>false</enable_ais>
+        <enable_certificate_based_authentication>false</enable_certificate_based_authentication>
+        <enable_favorites>false</enable_favorites>
+        <hide_portal_name>false</hide_portal_name>
+        <homepage display_value="x_cdw_hackathon_home">d6ba9a2b470b6a105446f19f016d43f7</homepage>
+        <icon/>
+        <inactive>false</inactive>
+        <kb_knowledge_base/>
+        <kb_knowledge_page/>
+        <login_page display_value="landing">36c61807cb31120000f8d856634c9ca9</login_page>
+        <logo/>
+        <notfound_page/>
+        <quick_start_config/>
+        <rtl_enabled>true</rtl_enabled>
+        <sc_catalog/>
+        <sc_catalog_page/>
+        <sc_category_page/>
+        <search_application/>
+        <search_results_configuration/>
+        <sp_chat_queue/>
+        <sp_rectangle_menu display_value="Hackathano Menu">01422267474b6a105446f19f016d437d</sp_rectangle_menu>
+        <sys_class_name>sp_portal</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-05 08:08:32</sys_created_on>
+        <sys_id>6a295ee7470b6a105446f19f016d437a</sys_id>
+        <sys_mod_count>7</sys_mod_count>
+        <sys_name>Hackathon</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_portal_6a295ee7470b6a105446f19f016d437a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-07 04:12:07</sys_updated_on>
+        <theme display_value="La Jolla">a7a6e78277002300a6e592718a10617a</theme>
+        <title>Hackathon</title>
+        <ts_index_group/>
+        <url_suffix>hackathon</url_suffix>
+        <user_registration_config display_value="User Registration">d206b3c0475f2e105446f19f016d4368</user_registration_config>
+    </sp_portal>
+    <sys_translated_text action="delete_multiple" query="documentkey=6a295ee7470b6a105446f19f016d437a"/>
+</record_update>

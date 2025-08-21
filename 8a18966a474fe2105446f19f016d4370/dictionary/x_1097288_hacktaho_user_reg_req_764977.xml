@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="5036b7c0475f2e105446f19f016d431c" extends="sys_user_registration_request" label="Hacktaho User Reg Req 764977" max_length="40" name="x_1097288_hacktaho_user_reg_req_764977" type="collection"/>
+</database>
