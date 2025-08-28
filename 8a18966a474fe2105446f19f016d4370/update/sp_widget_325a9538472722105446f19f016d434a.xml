@@ -173,8 +173,7 @@
       .catch(function(){ c.state.error = 'Failed to create registration'; })
       .finally(function(){ c.state.submitting = false; });
   };
-};
-]]></client_script>
+};]]></client_script>
         <controller_as>c</controller_as>
         <css>.hw-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }&#13;
 .hw-title { margin-top: 0; margin-bottom: 16px; }&#13;

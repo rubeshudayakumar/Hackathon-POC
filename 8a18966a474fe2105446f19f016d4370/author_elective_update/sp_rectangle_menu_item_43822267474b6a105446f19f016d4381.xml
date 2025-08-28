@@ -65,7 +65,7 @@
         <update_guid_history>623326a7c84b6a102e74ff5c76009337:672370748,64f2aa27c94b6a1086c45d03a67cf47d:-320652997</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="Participant Menu">53b3a667474b6a105446f19f016d4351</sys_audit_delete>
+        <sys_audit_delete display_value="">53b3a667474b6a105446f19f016d4351</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-05 08:52:28</sys_created_on>

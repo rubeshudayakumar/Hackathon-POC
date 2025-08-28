@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function ($scope) {
+  /* widget controller */
+  var c = this;
+
+  $scope.handleClick = function (hackathon_id) {
+    // Handle click event
+    window.location.href =
+      "/hck?id=ticket&sys_id=" +
+      hackathon_id +
+      "&table=x_1097288_hacktaho_hackathon_registration";
+    // You can add more logic here, like navigating to a different page or opening a modal
+  };
+};
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>/* Container styling */
+.container {
+  padding: 20px;
+}
+
+/* Card base styling */
+
+.card {
+  border-radius: 4px;
+  border: 1px solid #dde2e6;
+  box-shadow: none;
+  background: #fff;
+  height: 100%;
+  padding: 20px 24px 0 24px;
+  transition: none;
+  width: 500px;
+  min-width: 280px;
+  max-width: 100%;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Remove hover effect */
+.card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Card title */
+
+.card-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #181818;
+  margin-bottom: 0.4rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Card text */
+
+.card-text {
+  font-size: 1.25rem;
+  color: #555;
+  margin-bottom: 0;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  padding-bottom: 2rem;
+}
+
+/* Details section */
+
+.card-details {
+  border-top: 2px solid #e3e6e8;
+  background: #f7f7f7;
+  padding: 16px 20px;
+  font-size: 1.05rem;
+  color: #555;
+  border-radius: 0 0 4px 4px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin-left: -24px;
+  margin-right: -24px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 40px;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .card {
+    margin-bottom: 15px;
+  }
+}
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>hackathon-list</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Hackathon List</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function () {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+  data.hackathons = [];
+
+  var gr = new GlideRecord("x_1097288_hacktaho_hackathon_registration"); // or whatever sort field you have
+  gr.query();
+
+  while (gr.next()) {
+    data.hackathons.push({
+      hackathonName: gr.getValue("hackathon_name"),
+      description: gr.getValue("description"),
+      startDate: gr.getValue("start_date"),
+      hackathonMode: gr.getValue("mode"),
+      id: gr.getUniqueValue(),
+    });
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-28 09:41:29</sys_created_on>
+        <sys_id>a25b4143c3276610a4e87205e401316a</sys_id>
+        <sys_mod_count>28</sys_mod_count>
+        <sys_name>Hackathon List</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_a25b4143c3276610a4e87205e401316a</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-28 11:38:57</sys_updated_on>
+        <template><![CDATA[<div class="container">
+    <div class="row">
+        <div class="col-md-4" ng-repeat="h in data.hackathons">
+            <div class="card mb-3" style="cursor: pointer;" ng-click="handleClick(h.id)" ng-data="{{h.id}}">
+                <div class="card-body" style="padding-bottom: 0;">
+                    <h5 class="card-title">{{ h.hackathonName }}</h5>
+                    <p class="card-text">{{ h.description }}</p>
+                </div>
+                <div class="card-details">
+                    View Details
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

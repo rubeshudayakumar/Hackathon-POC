@@ -52,7 +52,7 @@
         <update_guid_history>6d84e6a7884b6a1057a83ae9a23e2ba1:1313195060</update_guid_history>
     </sys_update_version>
     <sys_metadata_delete action="INSERT_OR_UPDATE">
-        <sys_audit_delete display_value="x_cdw_hackathon_home - Container 1">0994a2e7474b6a105446f19f016d43cb</sys_audit_delete>
+        <sys_audit_delete display_value="">0994a2e7474b6a105446f19f016d43cb</sys_audit_delete>
         <sys_class_name>sys_metadata_delete</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-05 08:56:09</sys_created_on>

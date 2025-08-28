@@ -34,8 +34,7 @@
   $scope.$on('$destroy', function() {
     $interval.cancel(c.interval);
   });
-};
-]]></client_script>
+};]]></client_script>
         <controller_as>c</controller_as>
         <css>.card {&#13;
   border-radius: 12px;&#13;
@@ -119,7 +118,6 @@
       </div>
     </div>
   </div>
-</div>
-]]></template>
+</div>]]></template>
     </sp_widget>
 </record_update>

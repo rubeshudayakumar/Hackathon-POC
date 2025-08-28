@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sys_package_dependency_m2m">
     <sys_package_dependency_m2m action="INSERT_OR_UPDATE">
-        <dependency display_value="External User Self-Registration" source="com.snc.external_user_self_registration">4b8a680847dbea105446f19f016d4303</dependency>
+        <dependency display_value="">4b8a680847dbea105446f19f016d4303</dependency>
         <min_version>1.0.0</min_version>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-07 04:09:42</sys_created_on>

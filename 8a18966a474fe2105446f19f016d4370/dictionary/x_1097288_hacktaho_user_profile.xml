@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element db_object_id="aae7ea6f474b6a105446f19f016d433b" label="User Profile" max_length="40" name="x_1097288_hacktaho_user_profile" type="collection">
-        <element label="Bio" max_length="500" name="bio" type="string"/>
-        <element label="Email" max_length="50" name="email" type="string"/>
-        <element label="Interests" max_length="200" name="interests" type="string"/>
         <element label="Skills" max_length="100" name="skills" type="string"/>
+        <element label="Email" max_length="50" name="email" type="string"/>
+        <element label="Bio" max_length="500" name="bio" type="string"/>
         <element label="User" max_length="32" name="user_id" reference="sys_user" reference_qual="active=true^EQ" reference_qual_condition="active=true^EQ" type="reference"/>
+        <element label="Interests" max_length="200" name="interests" type="string"/>
         <element choice="1" label="User Type" max_length="40" name="user_type" type="choice">
             <choice>
-                <element inactive_on_update="false" label="Internal" sequence="10" value="internal"/>
                 <element inactive_on_update="false" label="External" sequence="20" value="external"/>
+                <element inactive_on_update="false" label="Internal" sequence="10" value="internal"/>
             </choice>
         </element>
         <index name="index">

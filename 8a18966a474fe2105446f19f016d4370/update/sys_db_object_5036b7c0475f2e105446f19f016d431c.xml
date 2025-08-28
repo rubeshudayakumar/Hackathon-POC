@@ -19,7 +19,7 @@
         <provider_class/>
         <read_access>true</read_access>
         <scriptable_table>false</scriptable_table>
-        <super_class display_value="User Registration Request" name="sys_user_registration_request">0b8a680847dbea105446f19f016d4305</super_class>
+        <super_class display_value="User Registration Request" name="sys_user_registration_request">7759b0c6c3232210a4e87205e40131b2</super_class>
         <sys_class_name>sys_db_object</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-07 04:09:40</sys_created_on>
