@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function ($scope, $location) {
+  /* widget controller */
+  var c = this;
+
+  $scope.handleClick = function (hackathon_id) {
+    // Handle click event
+    // window.location.href =
+    //   "/hck?id=ticket&sys_id=" +
+    //   hackathon_id +
+    //   "&table=x_1097288_hacktaho_hackathon_registration";
+    // // You can add more logic here, like navigating to a different page or opening a modal
+
+    if ($scope.data.hasRole) {
+      $location.url("/hck?id=hackathon_registration_page"); // redirect non-role users
+    } else {
+      $location.url(
+        "/hck?id=sn_user_registration&sys_id=d90cf454c33bea10a4e87205e40131a3"
+      ); // redirect role users
+    }
+  };
+};
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.hck-header-h3-container {&#13;
+  display: flex;&#13;
+  justify-content: space-between;&#13;
+  align-items: center;&#13;
+  padding: 0 16px;&#13;
+}&#13;
+&#13;
+.hck-header-h3-container {&#13;
+  .hck-btn-join-now {&#13;
+    background-color: #d32f2f;&#13;
+    color: white;&#13;
+    border: none;&#13;
+    border-radius: 4px;&#13;
+    padding: 8px 16px;&#13;
+    font-size: 16px;&#13;
+    cursor: pointer;&#13;
+    transition: background-color 0.3s;&#13;
+  }&#13;
+}&#13;
+&#13;
+.hck-header-h3 {&#13;
+  padding: 16px;&#13;
+}&#13;
+</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>header-3-title</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Header H3 - Title</name>
+        <option_schema>[{"name":"title","section":"other","default_value":"Header 3","label":"Title","type":"string"}]</option_schema>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function () {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+  var hackathonSysId = $sp.getParameter("sys_id");
+  data.hasRole = gs.hasRole("snc_external");
+  var gr = new GlideRecord("x_1097288_hacktaho_hackathon_registration");
+  if (gr.get(hackathonSysId)) {
+    data.title = gr.getValue("hackathon_name");
+  } else {
+    data.title = "No Title Found";
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-28 12:22:34</sys_created_on>
+        <sys_id>4160f903c3e76610a4e87205e40131bd</sys_id>
+        <sys_mod_count>30</sys_mod_count>
+        <sys_name>Header H3 - Title</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_4160f903c3e76610a4e87205e40131bd</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 06:20:12</sys_updated_on>
+        <template><![CDATA[<div>
+  <div class="hck-header-h3-container">
+    <h1 class="hck-header-h3">{{c.data.title}}</h1>
+    <button class="hck-btn-join-now" ng-click="handleClick(h.id)">Join Now</button>
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sc_cat_item_user_criteria_mtom">
+    <sc_cat_item_user_criteria_mtom action="INSERT_OR_UPDATE">
+        <sc_cat_item display_value="External User Registration - HCK">d90cf454c33bea10a4e87205e40131a3</sc_cat_item>
+        <sys_class_name>sc_cat_item_user_criteria_mtom</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 05:46:10</sys_created_on>
+        <sys_id>5d0cf454c33bea10a4e87205e40131c4</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>External User Registration - HCK.Registration form available for Public</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sc_cat_item_user_criteria_mtom_5d0cf454c33bea10a4e87205e40131c4</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 05:46:10</sys_updated_on>
+        <user_criteria display_value="Registration form available for Public">2d1bf05373320010fdbd04fbc4f6a783</user_criteria>
+    </sc_cat_item_user_criteria_mtom>
+</record_update>
