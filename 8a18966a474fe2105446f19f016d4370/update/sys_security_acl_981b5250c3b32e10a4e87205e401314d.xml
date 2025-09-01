@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl">
+    <sys_security_acl action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <admin_overrides>true</admin_overrides>
+        <advanced>false</advanced>
+        <applies_to/>
+        <condition/>
+        <controlled_by_refs/>
+        <decision_type>allow</decision_type>
+        <description>Allow read for hackathon_name in x_1097288_hacktaho_hackathon_registration, for users with role public, and if users satisfy the conditions of the Security Attribute "x_1097288_hacktaho__ACL_981b5250c3b32e10a4e87205e401314d".</description>
+        <local_or_existing>Local</local_or_existing>
+        <name>x_1097288_hacktaho_hackathon_registration.hackathon_name</name>
+        <operation display_value="read">read</operation>
+        <script/>
+        <security_attribute display_value="x_1097288_hacktaho__ACL_981b5250c3b32e10a4e87205e401314d">642b9250c3b32e10a4e87205e40131ae</security_attribute>
+        <sys_class_name>sys_security_acl</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 12:41:25</sys_created_on>
+        <sys_id>981b5250c3b32e10a4e87205e401314d</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_1097288_hacktaho_hackathon_registration.hackathon_name</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_security_acl_981b5250c3b32e10a4e87205e401314d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 12:41:46</sys_updated_on>
+        <type display_value="record">record</type>
+    </sys_security_acl>
+</record_update>

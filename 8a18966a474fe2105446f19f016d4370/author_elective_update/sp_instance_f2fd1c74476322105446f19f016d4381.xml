@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="DELETE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph>empty</glyph>
+        <id/>
+        <order>1</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="1">f3edd074476322105446f19f016d43a3</sp_column>
+        <sp_widget display_value="Copy of Hackathon Registration">325a9538472722105446f19f016d434a</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-21 06:36:26</sys_created_on>
+        <sys_id>f2fd1c74476322105446f19f016d4381</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Hackathon Registration</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_instance_f2fd1c74476322105446f19f016d4381</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-21 11:01:11</sys_updated_on>
+        <title>Hackathon Registration</title>
+        <url/>
+        <widget_parameters/>
+    </sp_instance>
+    <sys_translated_text action="DELETE" query="documentkey=f2fd1c74476322105446f19f016d4381"/>
+<sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</application>
+        <file_path/>
+        <instance_id>28ee2eabdba2f194b1eb9027c59619a5</instance_id>
+        <instance_name>dev221627</instance_name>
+        <name>sp_instance_f2fd1c74476322105446f19f016d4381</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_instance">
+    <sp_instance action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <class_name/>
+        <color>default</color>
+        <css/>
+        <glyph>empty</glyph>
+        <id/>
+        <order>1</order>
+        <roles/>
+        <short_description/>
+        <size>md</size>
+        <sp_column display_value="1">f3edd074476322105446f19f016d43a3</sp_column>
+        <sp_widget display_value="Copy of Hackathon Registration">325a9538472722105446f19f016d434a</sp_widget>
+        <sys_class_name>sp_instance</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-21 06:36:26</sys_created_on>
+        <sys_id>f2fd1c74476322105446f19f016d4381</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>Hackathon Registration</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_instance_f2fd1c74476322105446f19f016d4381</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-21 11:01:11</sys_updated_on>
+        <title>Hackathon Registration</title>
+        <url/>
+        <widget_parameters/>
+    </sp_instance>
+    <sys_translated_text action="delete_multiple" query="documentkey=f2fd1c74476322105446f19f016d4381"/>
+</record_update>]]></payload>
+        <payload_hash>1845457287</payload_hash>
+        <record_name>Hackathon Registration</record_name>
+        <reverted_from/>
+        <source>9b5970c6c3232210a4e87205e4013119</source>
+        <source_table>sys_upgrade_history</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-08-25 05:48:25</sys_created_on>
+        <sys_id>c269f4c6c3232210a4e87205e4013180</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>198dfc549c30000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-08-25 05:48:25</sys_updated_on>
+        <type>Instance</type>
+        <update_guid>8269f4c6df232210dcb8986620346c80</update_guid>
+        <update_guid_history>8269f4c6df232210dcb8986620346c80:1845457287</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Hackathon Registration">47181d94c3fbea10a4e87205e4013194</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 07:48:53</sys_created_on>
+        <sys_db_object display_value="" name="sp_instance">sp_instance</sys_db_object>
+        <sys_id>316fe3fc61544aa88d3ab5c3dffd6290</sys_id>
+        <sys_metadata>f2fd1c74476322105446f19f016d4381</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Hackathon Registration</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_scope_delete display_value="">3665a42f6936434a9fd96ef45ddf9244</sys_scope_delete>
+        <sys_update_name>sp_instance_f2fd1c74476322105446f19f016d4381</sys_update_name>
+        <sys_update_version display_value="sp_instance_f2fd1c74476322105446f19f016d4381">c269f4c6c3232210a4e87205e4013180</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 07:48:53</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

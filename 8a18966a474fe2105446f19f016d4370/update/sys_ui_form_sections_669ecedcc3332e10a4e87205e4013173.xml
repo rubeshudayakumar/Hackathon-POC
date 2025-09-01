@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update>
+    <sys_ui_form_sections form_id="669ecedcc3332e10a4e87205e4013173" sys_domain="global" table="x_1097288_hacktaho_user_reg_req_513682" version="3">
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>0</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2025-09-01 11:46:59</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b29e0210c3732e10a4e87205e4013133</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_1097288_hacktaho_user_reg_req_513682" name="x_1097288_hacktaho_user_reg_req_513682" sys_domain="global" view="Default view">669ecedcc3332e10a4e87205e4013173</sys_ui_form>
+            <sys_ui_section caption="NULL" display_value="" name="x_1097288_hacktaho_user_reg_req_513682" sys_domain="global" view="Default view">3a9e0210c3732e10a4e87205e401312b</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2025-09-01 11:46:59</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form_section action="INSERT_OR_UPDATE">
+            <position>1</position>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2025-09-01 11:46:59</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>b29e0210c3732e10a4e87205e401312b</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_overrides/>
+            <sys_ui_form display_value="x_1097288_hacktaho_user_reg_req_513682" name="x_1097288_hacktaho_user_reg_req_513682" sys_domain="global" view="Default view">669ecedcc3332e10a4e87205e4013173</sys_ui_form>
+            <sys_ui_section caption="Request details" display_value="Request details" name="x_1097288_hacktaho_user_reg_req_513682" sys_domain="global" view="Default view">be9ecedcc3332e10a4e87205e4013175</sys_ui_section>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2025-09-01 11:46:59</sys_updated_on>
+        </sys_ui_form_section>
+        <sys_ui_form action="INSERT_OR_UPDATE">
+            <name>x_1097288_hacktaho_user_reg_req_513682</name>
+            <roles/>
+            <sys_class_name>sys_ui_form</sys_class_name>
+            <sys_created_by>admin</sys_created_by>
+            <sys_created_on>2025-09-01 11:46:58</sys_created_on>
+            <sys_domain>global</sys_domain>
+            <sys_domain_path>/</sys_domain_path>
+            <sys_id>669ecedcc3332e10a4e87205e4013173</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>x_1097288_hacktaho_user_reg_req_513682</sys_name>
+            <sys_overrides/>
+            <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+            <sys_update_name>sys_ui_form_sections_669ecedcc3332e10a4e87205e4013173</sys_update_name>
+            <sys_updated_by>admin</sys_updated_by>
+            <sys_updated_on>2025-09-01 11:46:58</sys_updated_on>
+            <sys_user/>
+            <view display_value="Default view" name="NULL">Default view</view>
+            <view_name/>
+        </sys_ui_form>
+    </sys_ui_form_sections>
+</record_update>

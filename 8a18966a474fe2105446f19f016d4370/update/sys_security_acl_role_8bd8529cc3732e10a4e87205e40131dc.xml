@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="INSERT_OR_UPDATE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 12:32:51</sys_created_on>
+        <sys_id>8bd8529cc3732e10a4e87205e40131dc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_1097288_hacktaho_user_reg_req_513682.public</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_security_acl display_value="x_1097288_hacktaho_user_reg_req_513682">c5d8129cc3732e10a4e87205e401319c</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_8bd8529cc3732e10a4e87205e40131dc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 12:32:51</sys_updated_on>
+        <sys_user_role display_value="public" name="public">b0593b350a0a0aa7001d689e4542dc28</sys_user_role>
+    </sys_security_acl_role>
+</record_update>

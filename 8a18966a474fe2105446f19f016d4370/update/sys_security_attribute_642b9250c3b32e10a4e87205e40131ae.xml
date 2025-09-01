@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_attribute">
+    <sys_security_attribute action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <condition>LoggedIn=false</condition>
+        <description>Auto Created Attribute - ACL_981b5250c3b32e10a4e87205e401314d</description>
+        <is_dynamic>false</is_dynamic>
+        <is_localized>true</is_localized>
+        <is_system>false</is_system>
+        <label>ACL_981b5250c3b32e10a4e87205e401314d</label>
+        <lookup_table/>
+        <lookup_table_column/>
+        <name>x_1097288_hacktaho__ACL_981b5250c3b32e10a4e87205e401314d</name>
+        <script/>
+        <sys_class_name>sys_security_attribute</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 12:41:43</sys_created_on>
+        <sys_id>642b9250c3b32e10a4e87205e40131ae</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_1097288_hacktaho__ACL_981b5250c3b32e10a4e87205e401314d</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_security_attribute_642b9250c3b32e10a4e87205e40131ae</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 12:41:43</sys_updated_on>
+        <type>compound</type>
+    </sys_security_attribute>
+</record_update>

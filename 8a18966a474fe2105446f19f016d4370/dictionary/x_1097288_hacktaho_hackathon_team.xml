@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><database>
+    <element db_object_id="62bd01d4c3bbea10a4e87205e4013117" label="Hackathon Team" max_length="40" name="x_1097288_hacktaho_hackathon_team" type="collection">
+        <element label="Hackathon" max_length="32" name="hackathon" reference="x_1097288_hacktaho_hackathon_registration" type="reference"/>
+        <element label="Internal Users" max_length="4000" name="internal_users" reference="sys_user" type="glide_list"/>
+        <element label="External User Email Ids" max_length="40" name="external_user_email_ids" type="string"/>
+        <element label="Team Name" max_length="40" name="team_name" type="string"/>
+        <index name="index">
+            <element name="hackathon"/>
+        </index>
+    </element>
+</database>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role">
+    <sys_security_acl_role action="DELETE">
+        <sys_class_name>sys_security_acl_role</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 12:31:38</sys_created_on>
+        <sys_id>85d8129cc3732e10a4e87205e401319d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_1097288_hacktaho_user_reg_req_513682.snc_internal</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_security_acl display_value="x_1097288_hacktaho_user_reg_req_513682">c5d8129cc3732e10a4e87205e401319c</sys_security_acl>
+        <sys_update_name>sys_security_acl_role_85d8129cc3732e10a4e87205e401319d</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 12:31:38</sys_updated_on>
+        <sys_user_role display_value="snc_internal" name="snc_internal">7fcaa702933002009c8579b4f47ffbde</sys_user_role>
+    </sys_security_acl_role>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</application>
+        <file_path/>
+        <instance_id>28ee2eabdba2f194b1eb9027c59619a5</instance_id>
+        <instance_name>dev221627</instance_name>
+        <name>sys_security_acl_role_85d8129cc3732e10a4e87205e401319d</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role"><sys_security_acl_role action="INSERT_OR_UPDATE"><sys_class_name>sys_security_acl_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2025-09-01 12:31:38</sys_created_on><sys_id>85d8129cc3732e10a4e87205e401319d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>x_1097288_hacktaho_user_reg_req_513682.snc_internal</sys_name><sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package><sys_policy/><sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope><sys_security_acl display_value="x_1097288_hacktaho_user_reg_req_513682">c5d8129cc3732e10a4e87205e401319c</sys_security_acl><sys_update_name>sys_security_acl_role_85d8129cc3732e10a4e87205e401319d</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2025-09-01 12:31:38</sys_updated_on><sys_user_role display_value="snc_internal" name="snc_internal">7fcaa702933002009c8579b4f47ffbde</sys_user_role></sys_security_acl_role></record_update>]]></payload>
+        <payload_hash>-1881470335</payload_hash>
+        <record_name>x_1097288_hacktaho_user_reg_req_513682.snc_internal</record_name>
+        <reverted_from/>
+        <source>06549730c3232210a4e87205e4013180</source>
+        <source_table>sys_upgrade_history</source_table>
+        <state>previous</state>
+        <sys_created_by/>
+        <sys_created_on>2025-08-21 19:52:56</sys_created_on>
+        <sys_id>b219d69cc3732e10a4e87205e4013101</sys_id>
+        <sys_mod_count/>
+        <sys_recorded_at>198ce3105c00000000</sys_recorded_at>
+        <sys_updated_by/>
+        <sys_updated_on/>
+        <type>Access Roles</type>
+        <update_guid>7219d69cc8732e10724a523b97a47a01</update_guid>
+        <update_guid_history>7219d69cc8732e10724a523b97a47a01:-1881470335</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="x_1097288_hacktaho_user_reg_req_513682.snc_internal">ba19d69cc3732e10a4e87205e4013101</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-01 12:32:51</sys_created_on>
+        <sys_db_object display_value="" name="sys_security_acl_role">sys_security_acl_role</sys_db_object>
+        <sys_id>26c0d85a1e71478687e54ad6ff24d544</sys_id>
+        <sys_metadata>85d8129cc3732e10a4e87205e401319d</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>x_1097288_hacktaho_user_reg_req_513682.snc_internal</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_parent display_value="x_1097288_hacktaho_user_reg_req_513682">c5d8129cc3732e10a4e87205e401319c</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_scope_delete display_value="">3665a42f6936434a9fd96ef45ddf9244</sys_scope_delete>
+        <sys_update_name>sys_security_acl_role_85d8129cc3732e10a4e87205e401319d</sys_update_name>
+        <sys_update_version display_value="sys_security_acl_role_85d8129cc3732e10a4e87205e401319d">b219d69cc3732e10a4e87205e4013101</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-01 12:32:51</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
