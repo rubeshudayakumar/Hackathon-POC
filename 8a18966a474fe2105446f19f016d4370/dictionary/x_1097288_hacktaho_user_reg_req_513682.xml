@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element db_object_id="280c7454c33bea10a4e87205e4013151" extends="sys_user_registration_request" label="Hacktaho User Reg Req 513682" max_length="40" name="x_1097288_hacktaho_user_reg_req_513682" type="collection">
-        <element label="Hackathon" max_length="32" name="hackathon" reference="x_1097288_hacktaho_hackathon_registration" type="reference"/>
+        <element label="Hackathon" max_length="32" name="hackathon" type="string"/>
         <index name="index">
             <element name="hackathon"/>
         </index>

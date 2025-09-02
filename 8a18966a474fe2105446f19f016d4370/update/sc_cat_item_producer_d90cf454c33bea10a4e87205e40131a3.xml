@@ -82,14 +82,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-09-01 05:46:09</sys_created_on>
         <sys_id>d90cf454c33bea10a4e87205e40131a3</sys_id>
-        <sys_mod_count>10</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>External User Registration - HCK</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sc_cat_item_producer_d90cf454c33bea10a4e87205e40131a3</sys_update_name>
         <sys_updated_by>system</sys_updated_by>
-        <sys_updated_on>2025-09-01 12:47:37</sys_updated_on>
+        <sys_updated_on>2025-09-02 06:59:38</sys_updated_on>
         <table_name>x_1097288_hacktaho_user_reg_req_513682</table_name>
         <taxonomy_topic/>
         <template/>
@@ -97,7 +97,7 @@
         <type>item</type>
         <use_sc_layout>true</use_sc_layout>
         <vendor/>
-        <version>10</version>
+        <version>16</version>
         <view/>
         <visible_bundle>true</visible_bundle>
         <visible_guide>true</visible_guide>

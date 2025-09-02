@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
     <sp_widget action="INSERT_OR_UPDATE">
         <category>custom</category>
-        <client_script><![CDATA[api.controller = function ($scope, $location) {
+        <client_script><![CDATA[api.controller = function ($scope, $location,$rootScope) {
   /* widget controller */
   var c = this;
 
@@ -23,6 +23,12 @@
         "/hck?id=sn_user_registration&sys_id=d90cf454c33bea10a4e87205e40131a3"
       ); // redirect role users
     }
+		
+		//$rootScope.on("selectedHackathon",function(event,data){
+		//});
+		
+		sessionStorage.setItem("hackathonId",hackathon_id);
+		
   };
 };
 ]]></client_script>
@@ -86,14 +92,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-28 12:22:34</sys_created_on>
         <sys_id>4160f903c3e76610a4e87205e40131bd</sys_id>
-        <sys_mod_count>37</sys_mod_count>
+        <sys_mod_count>38</sys_mod_count>
         <sys_name>Header H3 - Title</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_widget_4160f903c3e76610a4e87205e40131bd</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-01 09:28:00</sys_updated_on>
+        <sys_updated_on>2025-09-02 06:13:41</sys_updated_on>
         <template><![CDATA[<div>
   <div class="hck-header-h3-container">
     <h1 class="hck-header-h3">{{c.data.title}}</h1>
