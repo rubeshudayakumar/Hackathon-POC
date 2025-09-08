@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_1097288_hacktaho.HackathonExternalUserRegistrationUtil</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>HackathonExternalUserRegistrationUtil</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var HackathonExternalUserRegistrationUtil = Class.create();
+HackathonExternalUserRegistrationUtil.prototype = {
+    initialize: function() {},
+
+    getRedirectionURL: function(portal) {
+
+        var portalSuffix = "sp";
+        var redirectPage = "sn_user_post_registration_redirect";
+        var redirectURL = "";
+
+        var gr = new GlideRecord('sp_portal');
+        gr.get(portal);
+        if (gr.isValidRecord()) {
+            portalSuffix = gr.url_suffix;
+            redirectURL = portalSuffix;
+
+            var externalUserRegistrationConfig = gr.user_registration_config;
+            var registrationConfigGR = new GlideRecord("sys_user_registration_config");
+            registrationConfigGR.get(externalUserRegistrationConfig);
+            if (registrationConfigGR.isValidRecord()) {
+                redirectPage = registrationConfigGR.getDisplayValue("post_registration_redirect_page");
+                redirectURL += "?id=" + redirectPage;
+            }
+
+        }
+        return redirectURL;
+    },
+
+
+    getPortalGR: function(profileId) {
+        var gr = new GlideRecord('sp_portal');
+        gr.addQuery("user_registration_config", profileId);
+        gr.query();
+        if (gr.next() && gr.isValidRecord()) {
+            return gr;
+        }
+    },
+    sendResetEmail: function(userId, requestId, result, profileId) {
+        var usr = new GlideRecord('sys_user');
+        usr.addQuery('sys_id', userId);
+        usr.addQuery('active', 'true');
+        usr.query();
+        if (!usr.next()) {
+            gs.info("User : " + userId + " is either inactive or doesn't exist on the instance");
+            return false; // just return boolean
+        }
+
+        var resetPasswordURL = '';
+        var token = new global.HackathonPasswordUtils().generateUniqueUserToken(usr.sys_id);
+
+        var portalGR = this.getPortalGR(profileId);
+
+        var portalSuffix = portalGR.url_suffix;
+        var encodedURL = portalSuffix;
+        // var homepage = portalGR.homepage;
+        // if (homepage && homepage.trim() !== "") {
+        var userProfile = new GlideRecord("x_1097288_hacktaho_self_reg_user_profile_513682");
+		userProfile.addQuery("user",userId);
+		userProfile.query();
+        if (userProfile.next()) {
+            var redirectURL = portalSuffix + "?id=hackathon_details&sys_id=" + userProfile.getValue("hackathon");
+            encodedURL = encodeURIComponent(redirectURL);
+        }
+        // }
+
+        if (!token || token.trim() === "") {
+            this.logError("Failed to generate unique token for user. Password reset failed for user : " + usr.user_name);
+            return false;
+        }
+
+        resetPasswordURL = this.getInstanceURL() + '/passwordreset.do?sysparm_id=' + usr.sys_id +
+            '&sysparm_request_id=' + requestId +
+            '&sysparm_nostack=true&sysparm_token=' + token;
+        resetPasswordURL += '&sysparm_redirect_url=' + encodedURL;
+
+        var eventName = 'x_1097288_hacktaho.hck.password.reset';
+        var hours = gs.getProperty("glide.pwd_reset.onetime.token.validity", "1");
+
+        var param2 = {
+            hours: hours,
+            title: portalGR.getValue("title"),
+            resetPwdURL: resetPasswordURL
+        };
+
+        // var json = {};
+        var jsonStr = JSON.stringify(param2);
+        gs.eventQueue(eventName, usr, usr.email, jsonStr);
+
+        return true;
+    },
+
+    getInstanceURL: function() {
+        var url = gs.getProperty("glide.servlet.uri");
+        if (!url || url.trim() === "") {
+            gs.info("glide.servlet.url is empty!");
+            return "";
+        }
+        url = url.trim();
+        var len = url.length;
+        if (url[len - 1] == '/')
+            return url.substring(0, len - 1);
+
+        return url;
+    },
+
+    getCoalesceFieldValue: function(source) {
+        var grUser = this.getUserGr(source);
+        if (grUser.next()) {
+            answer = grUser.sys_id;
+        } else {
+            answer = -1;
+        }
+        return answer;
+    },
+
+    getUserId: function(source) {
+        var grUser = this.getUserGr(source);
+        if (grUser.next()) {
+            answer = grUser.user_name;
+        } else {
+            answer = source.email;
+        }
+        return answer;
+    },
+
+    getUserReference: function(source) {
+        var grUser = this.getUserGr(source);
+        if (grUser.next())
+            return grUser.sys_id;
+    },
+
+    getUserGr: function(source) {
+        var grUser = new GlideRecord('sys_user');
+        grUser.orderByDesc("sys_created_on");
+        var qc = grUser.addQuery('email', source.email);
+        qc.addOrCondition('user_name', source.email);
+        grUser.queryNoDomain();
+        return grUser;
+
+    },
+
+    updateUserDomainDetails: function(source, target) {
+        var grUser = new GlideRecord('sys_user');
+        grUser.addQuery('user_name', target.user_name);
+        grUser.query();
+        if (grUser.next()) {
+            grUser.setValue('sys_domain', source.user_registration_config.sys_domain);
+            grUser.update();
+            var updateCount = grUser.getRowCount();
+            gs.debug("User : " + target.user_name + " updated with " + source.user_registration_config.sys_domain + " domain, update count : " + updateCount);
+        } else {
+            gs.debug("User : " + target.user_name + " not found!");
+        }
+    },
+
+
+    type: 'ExternalUserRegistrationUtil'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-05 05:48:32</sys_created_on>
+        <sys_id>b3c26de9c3f3a250a4e87205e40131db</sys_id>
+        <sys_mod_count>13</sys_mod_count>
+        <sys_name>HackathonExternalUserRegistrationUtil</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_script_include_b3c26de9c3f3a250a4e87205e40131db</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-05 08:50:49</sys_updated_on>
+    </sys_script_include>
+</record_update>

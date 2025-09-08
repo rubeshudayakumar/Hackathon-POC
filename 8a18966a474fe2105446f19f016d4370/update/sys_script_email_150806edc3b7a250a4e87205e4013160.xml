@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>hck_signup_external_users_post_activation</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+    // var jsonStr = event.parm2;
+    // var json = new JSONParser();
+    var jsonObject = JSON.parse(event.parm2);
+
+    var firstName = current.first_name;
+    var userName = current.user_name;
+    var resetlink = jsonObject.resetPwdURL;
+    var hours = jsonObject.hours;
+    var title = jsonObject.title;
+    var emailContent = {};
+    emailContent.templateContent =
+        "Hi  " + firstName + ",<br/>" +
+        "<br/>" +
+        "Your user account is successfully created on " + title + ". " +
+        "<br/>" +
+        "Your user name is: <strong> " + userName + " </strong>" +
+        "<br/>" +
+        "Please set your password to access your user account by clicking on the link below." +
+		"<br/>" +
+        "<a href=" + resetlink + ">Set a new Password</a>.<br/>" +
+        "<br/>" +
+        "Note: This link will expire in " + hours + " hours.";
+
+    email.setSubject("Set a new password to access your account");
+
+
+    template.print(emailContent.templateContent);
+
+
+
+
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-05 08:30:37</sys_created_on>
+        <sys_id>150806edc3b7a250a4e87205e4013160</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>hck_signup_external_users_post_activation</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_script_email_150806edc3b7a250a4e87205e4013160</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-05 08:34:08</sys_updated_on>
+    </sys_script_email>
+</record_update>
