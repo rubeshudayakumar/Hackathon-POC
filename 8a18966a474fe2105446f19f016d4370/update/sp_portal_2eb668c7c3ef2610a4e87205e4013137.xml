@@ -34,16 +34,16 @@ $text-muted:#666666;&#13;
         <homepage display_value="hackathon_home">adb2708fc3636610a4e87205e401311b</homepage>
         <icon/>
         <inactive>false</inactive>
-        <kb_knowledge_base/>
-        <kb_knowledge_page/>
-        <login_page display_value="hackathon_home">adb2708fc3636610a4e87205e401311b</login_page>
+        <kb_knowledge_base display_value="Consumer Service">2b292926c3302200e7c7d44d81d3ae10</kb_knowledge_base>
+        <kb_knowledge_page display_value="kb_home">e1c919e4dbd3220099f93691f0b8f535</kb_knowledge_page>
+        <login_page display_value="login">6995a144cb11120000f8d856634c9c25</login_page>
         <logo>34abe487c3636610a4e87205e40131a0</logo>
-        <logo_alt_text>undefined</logo_alt_text>
-        <notfound_page/>
+        <logo_alt_text/>
+        <notfound_page display_value="404">3c2c9063cb11020000f8d856634c9c1f</notfound_page>
         <quick_start_config/>
         <rtl_enabled>false</rtl_enabled>
-        <sc_catalog/>
-        <sc_catalog_page/>
+        <sc_catalog display_value="Consumer Service">0f910a2ac3112200b12d9f2974d3ae3c</sc_catalog>
+        <sc_catalog_page display_value="sc_home">fe87a11147132100ba13a5554ee490b9</sc_catalog_page>
         <sc_category_page/>
         <search_application/>
         <search_results_configuration/>
@@ -53,19 +53,19 @@ $text-muted:#666666;&#13;
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-28 07:00:57</sys_created_on>
         <sys_id>2eb668c7c3ef2610a4e87205e4013137</sys_id>
-        <sys_mod_count>20</sys_mod_count>
+        <sys_mod_count>29</sys_mod_count>
         <sys_name>Hackathon - EXT</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_portal_2eb668c7c3ef2610a4e87205e4013137</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-10 09:14:38</sys_updated_on>
+        <sys_updated_on>2025-09-14 08:32:36</sys_updated_on>
         <theme display_value="Hackathon Theme">9367a0cfc3236610a4e87205e4013167</theme>
         <title>Hackathon - EXT</title>
         <ts_index_group/>
         <url_suffix>hck</url_suffix>
-        <user_registration_config display_value="External User Registration - HCK">6bdb3454c33bea10a4e87205e4013160</user_registration_config>
+        <user_registration_config/>
     </sp_portal>
     <sys_translated_text action="delete_multiple" query="documentkey=2eb668c7c3ef2610a4e87205e4013137"/>
     <sys_attachment action="INSERT_OR_UPDATE">
@@ -73,6 +73,7 @@ $text-muted:#666666;&#13;
         <chunk_size_bytes>700000</chunk_size_bytes>
         <compressed>true</compressed>
         <content_type>image/png</content_type>
+        <encryption_context/>
         <file_name>logo</file_name>
         <hash>bfb4001728aa58701783b504ca18985fe6630ae785f8200d6fba5f715c037664</hash>
         <image_height>212</image_height>

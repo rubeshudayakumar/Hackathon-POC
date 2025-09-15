@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="INSERT_OR_UPDATE">
+        <child display_value="Registration Request - HCK">5156b46cc3c43210a4e87205e40131b2</child>
+        <cloned>2025-09-14 10:15:29</cloned>
+        <last_validated>2025-09-14 10:15:29</last_validated>
+        <parent display_value="Registration Request">7b680daac3221200e127d02422d3aeb7</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category/&gt;&lt;client_script&gt;&lt;![CDATA[function($scope, $rootScope, $window, $location, $uibModal, spUtil, $http, $sce, spAriaUtil, $timeout) {
+    var c = this;
+	var isOpenedInDesigner = location.pathname == "/$spd.do"; //this checks if the page is opened in designer or not
+	if(c.data.isloggedIn &amp;&amp; !isOpenedInDesigner){
+		var url = "/" + c.data.portal_url_suffix + "?id=" + c.data.landing_page;
+    $location.url(url);
+	}
+
+    if (c.data.has_extrnl_plugin) {
+        $scope.emailPattern = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+        $scope.phoneNumbr = /^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$/;
+		c.fieldSuccessMsgs = c.data.fieldSuccessMsgs;
+		c.fieldErrorMsgs = c.data.fieldErrorMsgs;
+		c.requiredLabel = c.data.requiredLabel;
+		c.requiredFilledLabel = c.data.requiredFilledLabel;
+		c.labelMap = c.data.labelMap;
+		$scope.namePattern = /^[a-z ,.'-]+$/i;
+        $scope.inputType = 'password';
+				c.data.emailInvalid = false;
+				c.data.emailError = false; 
+        c.policy = false;
+        c.captchaVerified = false;
+				var oldEmail = ''; 
+        $scope.$on('captchaVerified', function(event, obj) {
+            c.captchaVerified = obj.captchaVerified;
+            c.grc = obj.grc;
+            scope.$apply();
+        });
+		
+		$scope.getLiveErrorMessage = function(key) {
+			return c.fieldErrorMsgs[key];
+		};
+		
+		$scope.getLiveSuccessMessage = function(key) {
+			return c.fieldSuccessMsgs[key];
+		};
+
+        jQuery(document).on('click', '.resend-link', function() {
+            c.data.resend_link = true;
+            c.data.email = c.email;
+            c.server.get({
+                'email': c.data.email,
+                'resend_link': c.data.resend_link
+            }).then(
+                function(response) {
+                    window.location.href = "/" + c.data.portal_url_suffix + "?id=" + c.data.landing_page + "&amp;register_response=" + response.data.message;
+                });
+        });
+        $(document).on('click', '.comm-login', function() {
+             $location.url("/" + c.data.portal_url_suffix + "?id=" + c.data.portal_login);
+        });
+		
+		var sendAriaLiveMessage = function(message) {
+			$timeout(function(){
+				spAriaUtil.sendLiveMessage(message);
+			},500)
+		};
+		
+		//Sending aria live message based on field's status when a field is focused
+		c.sendFieldStatusMessage = function(userForm, event){
+			var fieldName = event.target.attributes.name.value + '';
+			if(fieldName == "email") {
+				if((userForm[fieldName].$dirty &amp;&amp; userForm[fieldName].$error.required) || userForm[fieldName].$error.pattern)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldErrorMsgs["email_invalid_format"]);
+				else if(userForm[fieldName].$dirty &amp;&amp; userForm[fieldName].$error.maxlength)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldErrorMsgs["email_invalid_size"]);
+				else if(userForm[fieldName].$dirty &amp;&amp; !userForm[fieldName].$error.required &amp;&amp; !userForm[fieldName].$error.pattern &amp;&amp; !userForm[fieldName].$error.maxlength)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldSuccessMsgs[fieldName]);
+			}
+			else if(fieldName == "first_name" || fieldName == "last_name") {
+				if((userForm[fieldName].$dirty &amp;&amp; userForm[fieldName].$error.required) || userForm[fieldName].$error.pattern)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldErrorMsgs[fieldName]);
+				else if(userForm[fieldName].$dirty &amp;&amp; !userForm[fieldName].$error.required &amp;&amp; !userForm[fieldName].$error.pattern)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldSuccessMsgs[fieldName]);
+			}
+			else if(fieldName == "phone_number") {
+				if(userForm[fieldName].$dirty &amp;&amp; userForm[fieldName].$error.pattern)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldErrorMsgs[fieldName]);
+				else if(userForm[fieldName].$dirty &amp;&amp; !userForm[fieldName].$error.pattern &amp;&amp; c.phone_number.length &gt; 0)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldSuccessMsgs[fieldName])
+			}
+			else if(fieldName == "password" || fieldName == "confirm_password") {
+				if(userForm[fieldName].$dirty &amp;&amp; userForm[fieldName].$invalid)
+					sendAriaLiveMessage(c.labelMap[fieldName] + "," + c.fieldErrorMsgs[fieldName]);
+				else if(userForm[fieldName].$dirty &amp;&amp; !userForm[fieldName].$invalid)
+					sendAriaLiveMessage(c.labelMap[fieldName]+ "," + c.fieldSuccessMsgs[fieldName]);
+			}
+		};
+        c.triggerEmailCheck = function(userForm) {
+            c.data.email = userForm.email.$viewValue;
+						c.data.emailError = false;
+            if (c.data.email &amp;&amp; $scope.emailPattern.test(c.data.email)) {
+                c.data.validate_email = true;
+                if (c.data.whitelist_array &amp;&amp; c.data.whitelist_array.length &gt; 0 &amp;&amp; c.data.whitelist_array != '') {
+                    var domain = c.data.email.substring(c.data.email.lastIndexOf("@") + 1);
+                    c.data.isWhiteListed = c.data.whitelist_array.indexOf(domain) &gt; -1;
+                } else if (c.data.whitelist_array == '')
+                    c.data.isWhiteListed = true;
+                if (c.data.isWhiteListed) {
+                    userForm.email.$setValidity('emailWhitelist', true);
+                } else
+                    userForm.email.$setValidity('emailWhitelist', false);
+            }
+        };
+			c.checkConfirmPassword = function(userForm){
+				if(!userForm.confirm_password.$viewValue) return;
+				if(userForm.password.$viewValue == userForm.confirm_password.$viewValue)
+					userForm.confirm_password.$setValidity('c.confirm_password',true); 
+				else
+					userForm.confirm_password.$setValidity('c.confirm_password',false); 
+			};
+        c.validatePassword = function(userForm) {
+            c.data.validatePassword = true;
+            c.data.password = userForm.password.$viewValue;
+            var checkPwd = new Function("password", 'var myFunc =  ' + c.data.pwdRule + '; return myFunc;')();
+            var pwdStrength = checkPwd(c.data.password);
+            if (pwdStrength == 0)
+                userForm.password.$setValidity('c.password', false);
+            else
+                userForm.password.$setValidity('c.password', true);
+        };
+        c.showSubmit = function() {
+            if (c.data.enableCaptcha == 'true')
+                return (c.userid == '' || c.email == '' || c.first_name == '' || c.last_name == '' || c.password == '' || c.confirm_password == '' || c.policy == false || c.captchaVerified == false || c.grc == '');
+            else
+                return (c.userid == '' || c.email == '' || c.first_name == '' || c.last_name == '' || c.password == '' || c.confirm_password == '' || c.policy == false);
+        };
+		c.action = function() {
+			var inputObj = {};
+			inputObj.grc = c.grc;
+			inputObj.userid = (c.userid == null) ? '' : c.userid;
+			inputObj.first_name = (c.first_name == null) ? '' : c.first_name;
+			inputObj.last_name = (c.last_name == null) ? '' : c.last_name;
+			inputObj.middle_name = (c.middle_name == null) ? '' : c.middle_name;
+			inputObj.email = (c.email == null) ? '' : c.email;
+			if(!inputObj.userid){
+				inputObj.userid = inputObj.email;
+			}
+			inputObj.phone_number = (c.phone_number == null) ? '' : c.phone_number;
+			inputObj.password = (c.password == null) ? '' : c.password;
+			inputObj.portal_id = c.data.portal_id;
+			inputObj._tc_number = c.data._tc_number;
+
+
+			var resourceUrl = '/api/now/externaluser/register';
+			$http.post(resourceUrl, inputObj)
+				.then(function(resp) {
+				window.location.href = "/" + c.data.portal_url_suffix + "?id=" + c.data.landing_page + "&amp;register_response=" + resp.data.result.message;
+			}, function(error) {
+				if(error.data.result &amp;&amp; error.data.result.message &amp;&amp; error.data.result.message === 'invalidGRC') {
+					c.data.captcha_error = true;
+				} else {
+					c.data.error = true;
+				}
+			});
+		};
+			
+		$scope.$on('$locationChangeStart', function (event, next, current) {
+			var nextPage=next+'';
+			if(nextPage.indexOf(c.data.login_page) &gt; 0)
+				$window.sessionStorage.setItem('navToUri','?id='+c.data.landing_page);
+		});
+        c.login = function() {
+            $location.url("/" + c.data.portal_url_suffix + "?id=" + c.data.portal_login);
+        };
+    }
+}]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css&gt;.text-muted {
+     font-weight 500px;
+  	color: $gray-dark;
+}
+.field-decoration-indicator{
+  padding-right: 2.5px;
+}
+.field-decoration-indicator-text{
+  margin-bottom: 25px;
+}
+a{
+  color : $link-color !important;
+}
+a:hover{
+    color: $link-hover-color !important;
+}
+ input[type=text]::-ms-clear {
+     display: none;
+}
+ input::-ms-clear {
+     display: none;
+}
+ .panel-body {
+     padding: 20px;
+}
+ .exiting-username {
+     padding: 10px;
+     margin-bottom: 10px;
+}
+ #reg-form{
+   .text-success {
+     color: $field-success-text;
+   }
+     .reg-header {
+         height: 27px;
+         font-size: 23px;
+         font-weight: 500;
+         line-height: 27px;
+         margin-bottom: 28px;
+    }
+     .registration-label {
+         font-size: 16px;
+         line-height: 19px;
+    }
+     .inpt-fields {
+         position: relative;
+         padding: 5px;
+         padding-left: 0px;
+    }
+     .inner-addon .glyphicon {
+         position: absolute;
+         padding: 10px;
+         pointer-events: none;
+         padding-right: 15px;
+         right: 0px;
+    }
+     .inpt-fields input {
+         padding-right: 30px;
+    }
+     .glyphicon {
+         top: inherit;
+    }
+     .glyphicon-ok {
+         color:$text-success;
+    }
+     .glyphicon-remove {
+         color:$text-danger;
+    }
+     .has-success .form-control {
+         border-color:$text-success;
+    }
+     .has-error .form-control {
+         border-color:$text-danger;
+    }
+     .form-validation-rules{
+         padding:15px;
+         padding-bottom:10px;
+         background-color: $gray-lighter;
+         font-size: 14px;
+    }
+     .icon {
+         display: table-cell;
+         vertical-align: middle;
+    }
+     .rules-outer{
+         padding-left:10px;
+         padding-bottom:5px;
+    }
+     .rules-text {
+         padding-left:10px;
+         padding-right: 10px;
+         display: table-cell;
+         vertical-align: top;
+         font-size: 14px;
+         line-height: 19px;
+    }
+     .form-group{
+         padding-bottom:5px;
+    }
+     .account-existing{
+         padding-top:10px;
+         text-align: center;
+         vertical-align: middle;
+    }
+     .form-link .icon{
+         position:absolute;
+    }
+     .policy-check{
+         font-size:14px;
+         padding-top: 3px;
+         padding-left: 15px;
+    }
+     .form-link{
+         display:table;
+         padding-left:5px;
+         margin-bottom:0px;
+         font-size: 16px;
+         line-height: 24px;
+    }
+     .link-text{
+         padding-left:5px;
+    }
+     #password-rule .fa{
+         font-size:7px;
+    }
+     .form_link a {
+         color: -webkit-link;
+         text-decoration: underline 
+    }
+    .form_link a:focus {
+        outline: auto -webkit-focus-ring-color !important 
+    }
+    input[type="checkbox"]:focus{
+       outline:5px solid $input-border-focus !important;
+    }
+   .terms-and-conditions-text{
+     margin-left: 10px;
+}
+   .terms-conditions-label {
+     font-size: 15px;
+     display: inline;
+   }
+ #html_element{
+     transform:scale(1.05);
+     -webkit-transform:scale(1.05);
+     transform-origin:0 5;
+     -webkit-transform-origin:0 0;
+}
+ @media (max-width: 375px) {
+     #html_element{
+         transform:scale(0.8);
+         -webkit-transform:scale(0.8);
+         transform-origin:0 0;
+         -webkit-transform-origin:0 0;
+    }
+}
+ .g-recaptcha{
+     padding-bottom: 10px;
+}
+ #captcha_form_group{
+     margin-bottom:0px;
+   #captchaVerified{
+     display:none;
+   }
+}
+   
+     &lt;/css&gt;&lt;data_table&gt;sp_rectangle&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id&gt;csp-registration&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;Registration Request&lt;/name&gt;&lt;option_schema&gt;[{"name":"landing_page","default_value":"","section":"other","label":"Landing Page","type":"string"},{"name":"captcha_prop_name","default_value":"sn_ext_usr_reg.captchaEnabled","section":"other","label":"Captcha property name","type":"string"},{"name":"login_page","default_value":"","section":"other","label":"Login Page","type":"string"},{"name":"cred_sysid","default_value":"","section":"other","label":"Credential Sysid","type":"string"}]&lt;/option_schema&gt;&lt;public&gt;true&lt;/public&gt;&lt;roles&gt;snc_external&lt;/roles&gt;&lt;script&gt;&lt;![CDATA[(function() {
+	data.portal = $sp.getPortalRecord();
+	data.portal_url_suffix = data.portal.getValue("url_suffix")+'';
+	data.landing_page = $sp.getPortalRecord().homepage.id+'';
+	if(gs.isLoggedIn()){
+		data.isloggedIn = true;
+		return;	
+	}
+	data.has_extrnl_plugin = GlidePluginManager.isActive('com.sn_external_user_register');
+	if (data.has_extrnl_plugin) {
+		data.portal_id= data.portal.getUniqueValue();
+		data.portal_name = data.portal.getValue("title")+'';
+		data.portal_login = data.portal.login_page.id+'' || 'csm_login';
+		data.login_page = options.login_page || '';
+		data.communityUser = false;
+		data.emailError = true;
+		data.captcha_prop = options.captcha_prop_name;
+		data.captch_url = 'https://www.google.com/recaptcha/api.js?onload=onloadCallback&amp;render=explicit&amp;hl=' + gs.getSession().getLanguage();
+		data.enableCaptcha = gs.getProperty(data.captcha_prop, 'true');
+		data.captchaSiteKey = gs.getProperty('google.captcha.site_key');
+		data.cred_sysid = options.cred_sysid || gs.getProperty("sn_customerservice.csm_portal.pwd_cred_store", '6e51033fbf020100710071a7bf0739e0');
+		var session = gs.getSession();
+		var external_utils = new sn_ext_usr_reg.ExternalUserManagmentUtils(data.portal_id);
+		var whitelist = gs.getProperty('sn_ext_usr_reg.allowed_email_domains');
+		data.whitelist_array = "";
+		if (whitelist)
+			data.whitelist_array = whitelist.replace(/\s/g, '').split(",");
+		data.sysuser_email_exists = false;
+		data.temprec_email_exists = false;
+		var privacyPolicyText = gs.getMessage('Privacy Policy');
+		var customerTermsText = gs.getMessage('Customer Service Terms and Conditions');
+		var privacyPolicy = '&lt;a href=/sn_customerservice_registration_privacy_policy_doc.do target=_blank&gt;&amp;nbsp;'+privacyPolicyText+'&lt;/a&gt;';
+		var customerTerms = '&lt;a href=/sn_customerservice_registration_terms_doc.do target=_blank&gt;&amp;nbsp;'+customerTermsText+'&lt;/a&gt;';
+		var termsConditions = gs.getMessage("I agree to the {0} and the {1}",[privacyPolicy, customerTerms]);
+		var termsConditionsText = gs.getMessage("I agree to the {0} and the {1}",[privacyPolicyText, customerTermsText]);
+		var here = gs.getMessage("here");
+		data.termsConditions = termsConditions;
+		data.termsConditionsText = termsConditionsText;
+		data.pwdRule = "";
+		data.pwdHints_array = [];
+		data.labelMap = {
+			"email": gs.getMessage('Email Address'),
+			"first_name": gs.getMessage('First Name'),
+			"last_name": gs.getMessage('Last Name'),
+			"phone_number": gs.getMessage('Phone Number'),
+			"password": gs.getMessage('Password'),
+			"confirm_password": gs.getMessage('Confirm Password')
+		};
+		data.fieldSuccessMsgs = {
+			"email":gs.getMessage('{0} valid',"Email address"),
+			"first_name": gs.getMessage('{0} valid',"First name"),
+			"last_name": gs.getMessage('{0} valid', "Last name"),
+			"phone_number": gs.getMessage('{0} valid',"Phone number"),
+			"password": gs.getMessage('{0} valid', "Password"),
+			"confirm_password": gs.getMessage('Passwords match')
+		};
+		data.fieldErrorMsgs = {
+			"email_invalid_format": gs.getMessage('Enter a valid email address in the format name@example.com'),
+			"email_invalid_size": gs.getMessage('Email address should be less than 100 characters'),
+			"first_name": gs.getMessage('{0} invalid',"First name"),
+			"last_name": gs.getMessage('{0} invalid', "Last name"),
+			"phone_number": gs.getMessage('{0} invalid',"Phone number"),
+			"password": gs.getMessage('Enter a valid password. Acceptable passwords are at least 8 characters long and contain at least one uppercase letter (from A to Z), one lowercase letter (from a to z), and one number (from 0 to 9)'),
+			"confirm_password": gs.getMessage('The values in the Password and Confirm Password fields must match')
+		};
+		data.requiredLabel = gs.getMessage('Required');
+		data.requiredFilledLabel = gs.getMessage('Required Filled');
+		var liStartTagString = '&lt;li class="rules-outer"&gt;&lt;div class="icon"&gt;&lt;i class="fa fa-circle"&gt;&lt;/i&gt;&lt;/div&gt; &lt;div class="rules-text"&gt;';
+	    var liEndTagString = '&lt;/li&gt;';
+		if(options.cred_sysid){
+		var credGr = new GlideRecord('pwd_cred_store');
+		if (credGr.get(data.cred_sysid)) {
+			data.pwdHints = credGr.getDisplayValue('pwd_rule_hint');
+			data.pwdRule = credGr.getValue('strength_rule');
+			data.pwdHints = data.pwdHints.replaceAll('-', '');
+			data.pwdHints = data.pwdHints.replaceAll('&lt;p&gt;', liStartTagString);
+			data.pwdHints = data.pwdHints.replaceAll('&lt;/p&gt;', '&lt;/li&gt;&lt;/li&gt;');
+		}
+		}
+		else{
+		data.procId = gs.getProperty('glide.service_portal.default_password_process', 'c6b0c20667100200a5a0f3b457415ad5');
+        var credMgr = new SNC.PwdCredentialStoreManager();
+		
+		var enable_pp = credMgr.getEnablePasswordPolicy(data.procId);
+		var policy = SNC.PasswordPolicyEvaluator;
+		var pwdRuleHints;
+		
+	    if(enable_pp) {
+		var pwdPolicy = credMgr.getPasswordPolicyId(data.procId);
+		data.pwdRule = policy.getPasswordStrengthScript(pwdPolicy);
+		pwdRuleHints = policy.getPasswordRuleHints(pwdPolicy);
+		if(pwdRuleHints){
+		var jsonParsedPwdRule = JSON.parse(pwdRuleHints);
+	    var hints = liStartTagString+ jsonParsedPwdRule[0].hint + liEndTagString ;
+		for (var j = 1; j &lt; jsonParsedPwdRule.length; j++) {
+                    hints = hints.concat(liStartTagString+ jsonParsedPwdRule[j].hint+liEndTagString);
+                }
+		data.pwdHints = hints;
+		}
+	}
+	else {
+		pwdRuleHints = credMgr.getPasswordRuleDesc(data.procId);
+		if(pwdRuleHints)
+		data.pwdHints = pwdRuleHints.replaceAll('-', '').replaceAll('&lt;p&gt;', liStartTagString).replaceAll('&lt;/p&gt;', '&lt;/li&gt;&lt;/li&gt;');
+		data.pwdRule = credMgr.getStrengthRule(data.procId);
+		
+	}
+		}
+		if (input &amp;&amp; input.email &amp;&amp; input.resend_link &amp;&amp; input.action != 'register'){
+				var resendResponse = external_utils.resendLink(input.email);
+				data.message_txt = resendResponse.message_txt;
+				data.message = resendResponse.message || "";
+				data.status = resendResponse.status || "";
+				gs.getSession().putClientData("reg_resp_message", data.message_txt);
+				gs.getSession().putClientData("reg_resp_status", data.status);
+				gs.getSession().putClientData("reg_email", input.email);
+		}
+	}
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;true&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2016-04-05 19:58:38&lt;/sys_created_on&gt;&lt;sys_id&gt;7b680daac3221200e127d02422d3aeb7&lt;/sys_id&gt;&lt;sys_mod_count&gt;96&lt;/sys_mod_count&gt;&lt;sys_name&gt;Registration Request&lt;/sys_name&gt;&lt;sys_package display_value="Consumer Service Portal Classic" source="com.glide.service-portal.consumer-portal"&gt;5646122fc377a210a4e87205e40131f3&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_7b680daac3221200e127d02422d3aeb7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2025-04-18 12:34:26&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;!--panel-body reg-body--&gt;
+&lt;!--&lt;div ng-if="data.has_extrnl_plugin"&gt;--&gt;
+&lt;div id="reg-form" class="col-lg-8 col-md-8 col-sm-12 col-xs-12 panel-body" ng-if="::!c.data.isloggedIn"&gt;
+   &lt;div class="reg-header" role="heading" aria-level="2"&gt;
+      ${Sign Up}
+   &lt;/div&gt;
+   &lt;form name="userForm" ng-submit="$event.preventDefault()" novalidate&gt;
+     &lt;div ng-if="data.captcha_error == true" class="alert alert-danger" role="alert"&gt;
+       &lt;div ng-if="data.captcha_error == true" &gt;${Please verify the security code}&lt;/div&gt;
+     &lt;/div&gt;
+      &lt;div ng-if="data.error == true" class="alert alert-danger" role="alert"&gt;
+       &lt;div ng-if="data.error == true" &gt;${Error processing request}&lt;/div&gt;
+     &lt;/div&gt;
+     &lt;div class="field-decoration-indicator-text" aria-hidden="true"&gt; 
+    	&lt;span class="fa fa-asterisk mandatory field-decoration-indicator" title="asterisk"&gt;&lt;/span&gt;
+      	${Indicates required fields} 
+     &lt;/div&gt;
+       &lt;!-- Email input--&gt;
+      &lt;div class="form-group" ng-class="{ 'has-error' : userForm.email.$invalid &amp;&amp; userForm.email.$dirty, 'has-success': !userForm.email.$invalid &amp;&amp; userForm.email.$dirty}"&gt;
+        &lt;span class="field-decorations"&gt;
+          &lt;span class="fa fa-asterisk mandatory field-decoration-indicator" ng-class="{'mandatory-filled':!userForm.email.$error.required}" aria-label="{{userForm.email.$error.required? c.requiredLabel: c.requiredFilledLabel}}" aria-hidden="true"&gt;&lt;/span&gt;
+        &lt;/span&gt;
+         &lt;label class="registration-label" for="email"&gt;${Email Address}&lt;/label&gt;
+         &lt;div class="inpt-fields inner-addon"&gt;
+            &lt;i  ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.email.$invalid &amp;&amp; userForm.email.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.email.$invalid &amp;&amp; userForm.email.$dirty}" aria-hidden="true"&gt;&lt;/i&gt;
+            &lt;!--ng-blur="c.triggerEmailCheck(userForm)" --&gt;
+            &lt;input  ng-pattern='emailPattern' ng-blur="c.triggerEmailCheck(userForm)"  ng-model="c.email" id="email" name="email" autocomplete="email" type="email" class="form-control" ng-focus="c.sendFieldStatusMessage(userForm,$event)" ng-maxlength="100"  aria-required="true"  required &gt;
+            &lt;div class= "bg-danger exiting-username" ng-if="userForm.$pending.emailWhitelist || userForm.$error.emailWhitelist"&gt;
+               &lt;p class= "text-danger" ng-if="userForm.$pending.emailWhitelist"&gt;checking....&lt;/p&gt;
+               &lt;p class= "text-danger" style="margin-bottom:0px;" ng-if="userForm.$error.emailWhitelist"&gt;${The email address domain is not allowed}&lt;/p&gt;
+            &lt;/div&gt;
+           	&lt;span class="sr-only" role="alert" ng-if="(userForm.email.$dirty &amp;&amp; userForm.email.$error.required) || userForm.email.$error.pattern"&gt;{{getLiveErrorMessage('email_invalid_format')}}&lt;/span&gt;
+           	&lt;span class="sr-only" role="alert" ng-if="userForm.email.$dirty &amp;&amp; userForm.email.$error.maxlength"&gt;{{getLiveErrorMessage('email_invalid_length')}}&lt;/span&gt;
+           	&lt;span class="sr-only" role="alert" ng-if="userForm.email.$dirty &amp;&amp; !userForm.email.$error.required &amp;&amp; !userForm.email.$error.pattern &amp;&amp; !userForm.email.$error.maxlength"&gt;{{getLiveSuccessMessage('email')}}&lt;/span&gt;
+            &lt;ul class="form-validation-rules" ng-show="userForm.email.$dirty &amp;&amp; (userForm.email.$invalid || c.data.emailError)" style="list-style: none;" aria-hidden="true"&gt;
+               &lt;li class="rules-outer" ng-if="userForm.email.$error || userForm.email.$error.pattern" ng-class="{ 'text-muted' :  (userForm.email.$dirty &amp;&amp; userForm.email.$error.required) || userForm.email.$error.pattern}" &gt;
+                &lt;div class="icon"&gt;&lt;i class="fa fa-times-circle-o" aria-hidden="true"&gt;&lt;/i&gt;&lt;/div&gt;
+                  &lt;div class="rules-text" &gt;${Email address is invalid}&lt;/div&gt;
+               &lt;/li&gt;
+               &lt;li class="rules-outer" ng-if="userForm.email.$error.maxlength" ng-class="{'text-muted' : userForm.email.$error.maxlength }" &gt;
+                 &lt;div class="icon"&gt;&lt;i class="fa fa-times-circle-o" aria-hidden="true"&gt;&lt;/i&gt;&lt;/div&gt;
+                  &lt;div class="rules-text" &gt;${Email address cannot exceed 100 characters}&lt;/div&gt;
+               &lt;/li&gt;
+            &lt;/ul&gt;
+         &lt;/div&gt;
+     &lt;/div&gt;   
+    &lt;div&gt;
+       &lt;!-- first_name input--&gt;
+        &lt;div class="form-group" ng-class="{ 'has-error' : userForm.first_name.$invalid &amp;&amp; userForm.first_name.$dirty, 'has-success': !userForm.first_name.$invalid &amp;&amp; userForm.first_name.$dirty}"&gt;
+          &lt;span class="field-decorations"&gt;
+            &lt;span class="fa fa-asterisk mandatory field-decoration-indicator" ng-class="{'mandatory-filled':!userForm.first_name.$error.required}" aria-label="{{userForm.first_name.$error.required? c.requiredLabel: c.requiredFilledLabel}}" aria-hidden="true"&gt;&lt;/span&gt;
+          &lt;/span&gt;
+           &lt;label class="registration-label" for="first_name"&gt;${First Name}&lt;/label&gt;
+           &lt;div class="inpt-fields inner-addon"&gt;
+              &lt;i  ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.first_name.$invalid &amp;&amp; userForm.first_name.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.first_name.$invalid &amp;&amp; userForm.first_name.$dirty}" aria-hidden="true"&gt;&lt;/i&gt;
+              &lt;!--ng-blur="c.triggerfirst_nameCheck(userForm)" --&gt;
+              &lt;input ng-pattern="namePattern" ng-model="c.first_name" id="first_name" name="first_name" autocomplete="given-name" type="first_name" class="form-control" ng-minlength="1" ng-focus="c.sendFieldStatusMessage(userForm, $event)" aria-required="true" required /&gt;
+              &lt;span class="sr-only" role="alert" ng-if="(userForm.first_name.$dirty &amp;&amp; userForm.first_name.$error.required) || userForm.first_name.$error.pattern"&gt;{{getLiveErrorMessage('first_name')}}&lt;/span&gt;
+              &lt;span class="sr-only" role="alert" ng-if="userForm.first_name.$dirty &amp;&amp; !userForm.first_name.$error.required &amp;&amp; !userForm.first_name.$error.pattern"&gt;{{getLiveSuccessMessage('first_name')}}&lt;/span&gt;
+           &lt;/div&gt;
+        &lt;/div&gt;
+       &lt;!-- last_name input--&gt;
+        &lt;div class="form-group" ng-class="{ 'has-error' : userForm.last_name.$invalid &amp;&amp; userForm.last_name.$dirty, 'has-success': !userForm.last_name.$invalid &amp;&amp; userForm.last_name.$dirty}"&gt;
+            &lt;span class="field-decorations"&gt;
+          		&lt;span class="fa fa-asterisk mandatory field-decoration-indicator" ng-class="{'mandatory-filled':!userForm.last_name.$error.required}" aria-label="{{userForm.last_name.$error.required? c.requiredLabel: c.requiredFilledLabel}}" aria-hidden="true"&gt;&lt;/span&gt;
+        	&lt;/span&gt;
+           &lt;label class="registration-label" for="last_name"&gt;${Last Name}&lt;/label&gt;
+           &lt;div class="inpt-fields inner-addon"&gt;
+              &lt;i  ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.last_name.$invalid &amp;&amp; userForm.last_name.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.last_name.$invalid &amp;&amp; userForm.last_name.$dirty}" aria-hidden="true"&gt;&lt;/i&gt;
+              &lt;!--ng-blur="c.triggerlast_nameCheck(userForm)" --&gt;
+              &lt;input ng-pattern="namePattern" ng-model="c.last_name" id="last_name" name="last_name" autocomplete="family-name" type="last_name" class="form-control" ng-focus="c.sendFieldStatusMessage(userForm,$event)" ng-minlength="1" aria-required="true" required /&gt;
+              &lt;span class="sr-only" role="alert" ng-if="(userForm.last_name.$dirty &amp;&amp; userForm.last_name.$error.required) || userForm.last_name.$error.pattern"&gt;{{getLiveErrorMessage('last_name')}}&lt;/span&gt;
+              &lt;span class="sr-only" role="alert" ng-if="userForm.last_name.$dirty &amp;&amp; !userForm.last_name.$error.required &amp;&amp; !userForm.last_name.$error.pattern"&gt;{{getLiveSuccessMessage('last_name')}}&lt;/span&gt;
+           &lt;/div&gt;
+        &lt;/div&gt;
+       &lt;!-- Phone Number --&gt;
+       &lt;div class="form-group" ng-class="{ 'has-error' :userForm.phone_number.$invalid &amp;&amp; userForm.phone_number.$dirty, 'has-success': !userForm.phone_number.$invalid &amp;&amp; userForm.phone_number.$dirty &amp;&amp;  c.phone_number.length &gt; 0}"&gt;
+           &lt;label class="registration-label" for="phone_number"&gt;${Phone }${Number}&lt;span class="text-muted"&gt;
+           ${(Optional)}
+           &lt;/span&gt;
+           &lt;/label&gt;
+           &lt;br&gt;
+           &lt;div class="inpt-fields inner-addon"&gt;
+              &lt;i  ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.phone_number.$invalid &amp;&amp; userForm.phone_number.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.phone_number.$invalid &amp;&amp; userForm.phone_number.$dirty &amp;&amp;  c.phone_number.length &gt; 0}" aria-hidden="true"&gt;&lt;/i&gt;
+              &lt;input ng-maxlength="20" placeholder="xxx-xxx-xxxx" ng-pattern="phoneNumbr" ng-model="c.phone_number" id="phone_number" name="phone_number" ng-focus="c.sendFieldStatusMessage(userForm,$event)" autocomplete="tel" type="tel" class="form-control" &gt;
+              &lt;span class="sr-only" role="alert" ng-if="userForm.phone_number.$dirty &amp;&amp; userForm.phone_number.$error.pattern"&gt;{{getLiveErrorMessage('phone_number')}}&lt;/span&gt;
+              &lt;span class="sr-only" role="alert" ng-if="userForm.phone_number.$dirty &amp;&amp; !userForm.phone_number.$error.pattern &amp;&amp; c.phone_number.length &gt; 0"&gt;{{getLiveSuccessMessage('phone_number')}}&lt;/span&gt;
+              &lt;ul class="form-validation-rules" ng-show="userForm.phone_number.$dirty &amp;&amp; userForm.phone_number.$invalid" style="list-style: none;" aria-hidden="true"&gt;
+                 &lt;li class="rules-outer" ng-class="{ 'text-muted' :(userForm.phone_number.$dirty &amp;&amp; userForm.phone_number.$error.required) || userForm.phone_number.$error.pattern , 'text-success': userForm.phone_number.$dirty &amp;&amp; !userForm.phone_number.$error.required &amp;&amp; !userForm.phone_number.$error.pattern  }" &gt;
+                    &lt;div class="icon"&gt;&lt;i ng-class="{ 'fa fa-times-circle-o' :(userForm.phone_number.$dirty &amp;&amp; userForm.phone_number.$error.required) || userForm.phone_number.$error.pattern , 'fa fa-check-circle': userForm.phone_number.$dirty &amp;&amp; !userForm.phone_number.$error.required &amp;&amp; !userForm.phone_number.$error.pattern  }" aria-hidden="true"&gt;&lt;/i&gt;&lt;/div&gt;
+                    &lt;div class="rules-text" &gt;${Phone number is invalid}&lt;/div&gt;
+                 &lt;/li&gt;
+              &lt;/ul&gt;
+           &lt;/div&gt;
+        &lt;/div&gt;
+       &lt;!-- Password --&gt;
+       &lt;div class="form-group" ng-class="{'has-error' :userForm.password.$invalid &amp;&amp; userForm.password.$dirty , 'has-success': !userForm.password.$invalid &amp;&amp; userForm.password.$dirty}" &gt;
+         	&lt;span class="field-decorations"&gt;
+          		&lt;span class="fa fa-asterisk mandatory field-decoration-indicator" ng-class="{'mandatory-filled':!userForm.password.$error.required}" aria-label="{{userForm.password.$error.required? c.requiredLabel: c.requiredFilledLabel}}" aria-hidden="true"&gt;&lt;/span&gt;
+        	&lt;/span&gt;
+           &lt;label class="registration-label" for="password"&gt;
+           ${Password}
+           &lt;/label&gt;
+           &lt;div class="inpt-fields inner-addon"&gt;
+              &lt;i ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.password.$invalid &amp;&amp; userForm.password.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.password.$invalid &amp;&amp; userForm.password.$dirty}" aria-hidden="true"&gt;&lt;/i&gt;
+              &lt;input  ng-model-options="{updateOn: 'blur'}"  ng-keyup="c.checkConfirmPassword(userForm);c.validatePassword(userForm)" ng-focus="c.sendFieldStatusMessage(userForm,$event)" ng-model="c.password" id="password" name="password" type="{{inputType}}" aria-required="true"  class="form-control" required&gt;
+              &lt;span class="sr-only" role="alert" ng-if="userForm.password.$invalid &amp;&amp; userForm.password.$dirty"&gt;{{getLiveErrorMessage('password')}}&lt;/span&gt;
+              &lt;span class="sr-only" role="alert" ng-if="!userForm.password.$invalid &amp;&amp; userForm.password.$dirty"&gt;{{getLiveSuccessMessage('password')}}&lt;/span&gt;
+              &lt;div id="password-rule" class="form-validation-rules" ng-show="userForm.password.$dirty &amp;&amp; userForm.password.$invalid" aria-hidden="true"&gt;
+                 &lt;p class="text-muted"&gt;${Your password requires: }&lt;br&gt;&lt;/p&gt;
+                 &lt;ul class="rules-outer text-muted" ng-bind-html="data.pwdHints" style="list-style: none;"&gt;&lt;/ul&gt;
+              &lt;/div&gt;
+           &lt;/div&gt;
+        &lt;/div&gt;
+       &lt;!-- confirm password --&gt;
+    	&lt;div class="form-group password-input" ng-class="{'has-error' :userForm.confirm_password.$invalid &amp;&amp; userForm.confirm_password.$dirty , 'has-success': !userForm.confirm_password.$invalid}" &gt;
+        &lt;span class="field-decorations"&gt;
+          &lt;span class="fa fa-asterisk mandatory field-decoration-indicator" ng-class="{'mandatory-filled':!userForm.confirm_password.$error.required}" aria-label="{{userForm.confirm_password.$error.required? c.requiredLabel: c.requiredFilledLabel}}" aria-hidden="true"&gt;&lt;/span&gt;
+        &lt;/span&gt;
+         &lt;label class="registration-label" for="confirm_password"&gt;
+         ${Confirm Password}
+         &lt;/label&gt;
+         &lt;div class="inpt-fields inner-addon"&gt;
+            &lt;i  ng-class="{'glyphicon glyphicon-remove text-danger' :userForm.confirm_password.$invalid &amp;&amp; userForm.confirm_password.$dirty , 'glyphicon glyphicon-ok text-success': !userForm.confirm_password.$invalid &amp;&amp; userForm.confirm_password.$dirty}" aria-hidden="true" &gt;&lt;/i&gt;
+            &lt;input  ng-model="c.confirm_password" ng-keyup="c.checkConfirmPassword(userForm)"
+               type="{{inputType}}" id="confirm_password" name="confirm_password" class="form-control" ng-focus="match_highlight=true;c.sendFieldStatusMessage(userForm,$event);" ng-blur="match_highlight=false" aria-required="true" required&gt;
+            &lt;span class="sr-only" role="alert" ng-if="userForm.confirm_password.$invalid &amp;&amp; userForm.confirm_password.$dirty"&gt;{{getLiveErrorMessage('confirm_password')}}&lt;/span&gt;
+            &lt;span class="sr-only" role="alert" ng-if="!userForm.confirm_password.$invalid &amp;&amp; userForm.confirm_password.$dirty"&gt;{{getLiveSuccessMessage('confirm_password')}}&lt;/span&gt;
+            &lt;ul class="form-validation-rules" ng-show="userForm.confirm_password.$dirty &amp;&amp; userForm.confirm_password.$invalid" style="list-style: none;" aria-hidden="true"&gt;
+               &lt;li class="rules-outer" ng-class="{'text-muted' :(userForm.confirm_password.$dirty &amp;&amp; userForm.confirm_password.$error.required) || userForm.confirm_password.$error , 'text-success':userForm.confirm_password.$dirty &amp;&amp; !userForm.confirm_password.$error.required &amp;&amp; !userForm.confirm_password.$error  }" &gt;
+                  &lt;div class="icon"&gt;&lt;i ng-class="{ 'fa fa-times-circle-o' :(userForm.confirm_password.$dirty &amp;&amp; userForm.confirm_password.$error.required) || userForm.confirm_password.$error  , 'fa fa-check-circle':  userForm.confirm_password.$dirty &amp;&amp; !userForm.confirm_password.$error.required &amp;&amp; !userForm.confirm_password.$error  }" aria-hidden="true"&gt;&lt;/i&gt;&lt;/div&gt;
+                  &lt;div class="rules-text" &gt;${Password does not match}
+                  &lt;/div&gt;
+               &lt;/li&gt;
+            &lt;/ul&gt;
+         &lt;/div&gt;
+      &lt;/div&gt;    
+    &lt;/div&gt;
+     &lt;!-- reCaptcha --&gt;
+      &lt;input id="sitekey" type="hidden" value={{c.data.captchaSiteKey}}&gt;
+      &lt;script&gt;
+         (function(){ 
+           var e = $('.password-input');
+           var lang = g_lang || window.NOW.language;
+           var d = document.createElement("script");
+           d.src = "https://www.google.com/recaptcha/api.js?onload=onloadCallback&amp;render=explicit";
+           if(lang)
+             d.src +='&amp;hl='+lang;
+           d.type = "text/javascript"; 
+           d.async = true;
+           d.defer = true;
+           e.after(d);
+         })();
+         var onloadCallback = function() {
+           jQuery('#g-recaptcha-response').attr('aria-hidden', true);
+           jQuery('#g-recaptcha-response').attr('aria-label', true);
+           var captchaVerified;
+           var captchaWidget;
+           var verifyCallback = function(grc) {
+             if ((grc == "") || (grc == undefined))
+               captchaVerified = false;
+             else 
+               captchaVerified = true;
+             jQuery("#captchaVerified").attr("value",captchaVerified);
+             angular.element('#captchaVerified').scope().$root.$broadcast('captchaVerified',{captchaVerified:captchaVerified,grc:grc});
+           };
+           var sitekey = jQuery("#sitekey").val();
+            /*if check has been added so that the recaptcha render will not happen 
+            second time even with the element present resulting in 
+            'recaptch has been already rendered' console error */                
+           if($('#html_element').html() == ''){
+             captchaWidget = grecaptcha.render('html_element', {
+               'sitekey' : sitekey,
+               'callback' : verifyCallback,
+               'theme' : 'light',
+               'expired-callback' :  captchaExpired
+             });
+           }
+         };
+         var captchaExpired = function(){
+           captchaVerified = false;
+           jQuery("#captchaVerified").attr("value",captchaVerified);
+           angular.element('#captchaVerified').scope().$root.$broadcast('captchaVerified',{captchaVerified:captchaVerified,grc:null});
+         };
+      &lt;/script&gt;
+      &lt;!-- Google Recaptcha ng-if="data.enableCaptcha == 'true'" ng-if="c.data.enableCaptcha == true"--&gt;
+      &lt;div  ng-if="c.data.enableCaptcha == 'true' ||c.data.enableCaptcha == true" id="captcha_form_group"  class="form-group"&gt;
+        &lt;input ng-model="c.captchaVerified" type="checkbox" name="captchaVerified" id="captchaVerified" style="" class="form-control" aria-label="captcha-verify"&gt;
+   &lt;form action="?" method="POST"&gt;
+   &lt;div class="g-recaptcha" id="html_element"&gt;&lt;/div&gt; 
+   &lt;/form&gt;
+   &lt;/div&gt;
+   &lt;!-- Legal COPA conditions --&gt;
+     &lt;div style="clear:both"&gt;
+   &lt;/div&gt;
+     &lt;!-- google recaptcha --&gt;
+    &lt;!-- Privacy Policy &amp; Terms conditions --&gt;
+     &lt;div class="form-group form_link"&gt;
+       &lt;input ng-model="c.policy" id="checkbox_agree" type="checkbox" name="policy" aria-label="{{c.data.termsConditionsText}}"&gt;
+       &lt;label class="terms-conditions-label"&gt;
+          &lt;span class="terms-and-conditions-text" ng-bind-html="c.data.termsConditions" /&gt;
+       &lt;/label&gt;
+     &lt;/div&gt;
+   &lt;div style="clear:both"&gt;
+   &lt;/div&gt;
+   &lt;button type="submit" ng-disabled="c.showSubmit()  || userForm.userid.$invalid || userForm.email.$invalid  || userForm.first_name.$invalid || userForm.first_name.$pristine || userForm.last_name.$invalid || userForm.last_name.$pristine || userForm.password.$invalid || userForm.confirm_password.$invalid"
+      ng-click="c.action()"
+      class=" signup-button btn btn-primary btn-block"&gt; ${Sign Up}
+   &lt;/button&gt;
+   &lt;div class="form-group account-existing"&gt;
+      &lt;span&gt; ${Already have an account?}&lt;/span&gt;&lt;br&gt;
+      &lt;a href ng-click="c.login()"&gt; ${Log in}&lt;/a&gt;
+   &lt;/div&gt;
+   &lt;/form&gt;
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-14 10:15:29</sys_created_on>
+        <sys_id>1d56b46cc3c43210a4e87205e40131b5</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>5156b46cc3c43210a4e87205e40131b2</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_1d56b46cc3c43210a4e87205e40131b5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-14 10:15:29</sys_updated_on>
+    </sp_rel_widget_clone>
+</record_update>

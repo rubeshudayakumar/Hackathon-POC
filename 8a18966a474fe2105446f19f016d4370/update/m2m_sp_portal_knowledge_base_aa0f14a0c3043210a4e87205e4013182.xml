@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="m2m_sp_portal_knowledge_base">
+    <m2m_sp_portal_knowledge_base action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <kb_knowledge_base display_value="Consumer Service">2b292926c3302200e7c7d44d81d3ae10</kb_knowledge_base>
+        <order>100</order>
+        <sp_portal display_value="Hackathon - EXT">2eb668c7c3ef2610a4e87205e4013137</sp_portal>
+        <sys_class_name>m2m_sp_portal_knowledge_base</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-14 08:33:43</sys_created_on>
+        <sys_id>aa0f14a0c3043210a4e87205e4013182</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Consumer Service.Hackathon - EXT</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>m2m_sp_portal_knowledge_base_aa0f14a0c3043210a4e87205e4013182</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-14 08:33:43</sys_updated_on>
+    </m2m_sp_portal_knowledge_base>
+</record_update>

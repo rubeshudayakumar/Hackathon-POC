@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rectangle_menu_item">
+    <sp_rectangle_menu_item action="DELETE">
+        <active>true</active>
+        <color>default</color>
+        <condition/>
+        <display_1/>
+        <display_2/>
+        <display_date/>
+        <filter/>
+        <glyph>empty</glyph>
+        <hint/>
+        <kb_article/>
+        <kb_category/>
+        <kb_topic/>
+        <label>Test</label>
+        <order>100</order>
+        <record_script/>
+        <sc_cat_item/>
+        <sc_category/>
+        <short_description/>
+        <sp_page display_value="organizer_registration">a0f93c42c3232210a4e87205e4013150</sp_page>
+        <sp_rectangle_menu display_value="SP Header Menu Hackathon">64020c5bc3372210a4e87205e401312c</sp_rectangle_menu>
+        <sp_rectangle_menu_item/>
+        <sys_class_name>sp_rectangle_menu_item</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-10 10:00:59</sys_created_on>
+        <sys_id>ba9c44dbc3772210a4e87205e4013185</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Test</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_rectangle_menu_item_ba9c44dbc3772210a4e87205e4013185</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-10 10:00:59</sys_updated_on>
+        <table/>
+        <type>page</type>
+        <url/>
+        <url_target/>
+    </sp_rectangle_menu_item>
+    <sys_translated_text action="DELETE" query="documentkey=ba9c44dbc3772210a4e87205e4013185"/>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</application>
+        <file_path/>
+        <instance_id>28ee2eabdba2f194b1eb9027c59619a5</instance_id>
+        <instance_name>dev221627</instance_name>
+        <name>sp_rectangle_menu_item_ba9c44dbc3772210a4e87205e4013185</name>
+        <payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rectangle_menu_item"><sp_rectangle_menu_item action="INSERT_OR_UPDATE"><active>true</active><color>default</color><condition/><display_1/><display_2/><display_date/><filter/><glyph>empty</glyph><hint/><kb_article/><kb_category/><kb_topic/><label>Test</label><order>100</order><record_script/><sc_cat_item/><sc_category/><short_description/><sp_page display_value="organizer_registration">a0f93c42c3232210a4e87205e4013150</sp_page><sp_rectangle_menu display_value="SP Header Menu Hackathon">64020c5bc3372210a4e87205e401312c</sp_rectangle_menu><sp_rectangle_menu_item/><sys_class_name>sp_rectangle_menu_item</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2025-09-10 10:00:59</sys_created_on><sys_id>ba9c44dbc3772210a4e87205e4013185</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Test</sys_name><sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package><sys_policy/><sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope><sys_update_name>sp_rectangle_menu_item_ba9c44dbc3772210a4e87205e4013185</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2025-09-10 10:00:59</sys_updated_on><table/><type>page</type><url/><url_target/></sp_rectangle_menu_item><sys_translated_text action="delete_multiple" query="documentkey=ba9c44dbc3772210a4e87205e4013185"/></record_update>]]></payload>
+        <payload_hash>822169286</payload_hash>
+        <record_name>Test</record_name>
+        <reverted_from/>
+        <source>f9793c42c3232210a4e87205e40131e7</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-10 10:00:59</sys_created_on>
+        <sys_id>79acc4dbc3772210a4e87205e401311d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>199331244760000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-10 10:00:59</sys_updated_on>
+        <type>Menu Item</type>
+        <update_guid>fdacc4db7d7722106feaef5b05d7f41c</update_guid>
+        <update_guid_history>fdacc4db7d7722106feaef5b05d7f41c:822169286</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete display_value="Test">81bc08dbc3772210a4e87205e4013106</sys_audit_delete>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-10 10:01:11</sys_created_on>
+        <sys_db_object display_value="" name="sp_rectangle_menu_item">sp_rectangle_menu_item</sys_db_object>
+        <sys_id>0f656d6982c546e492d116bac3234604</sys_id>
+        <sys_metadata>ba9c44dbc3772210a4e87205e4013185</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Test</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_parent/>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_scope_delete display_value="">3665a42f6936434a9fd96ef45ddf9244</sys_scope_delete>
+        <sys_update_name>sp_rectangle_menu_item_ba9c44dbc3772210a4e87205e4013185</sys_update_name>
+        <sys_update_version display_value="sp_rectangle_menu_item_ba9c44dbc3772210a4e87205e4013185">79acc4dbc3772210a4e87205e401311d</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-10 10:01:11</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>
