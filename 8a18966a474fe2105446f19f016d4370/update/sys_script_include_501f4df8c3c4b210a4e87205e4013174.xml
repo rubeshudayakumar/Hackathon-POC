@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>public</access>
+        <active>true</active>
+        <api_name>x_1097288_hacktaho.HackathonExternalRegConstants</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <mobile_callable>false</mobile_callable>
+        <name>HackathonExternalRegConstants</name>
+        <sandbox_callable>false</sandbox_callable>
+        <script><![CDATA[var HackathonExternalRegConstants = Class.create();
+HackathonExternalRegConstants.prototype = {
+    initialize: function() {
+    },
+    type: 'HackathonExternalRegConstants'
+};
+
+HackathonExternalRegConstants.PORTAL_NAME = "community";
+HackathonExternalRegConstants.SYS_USER_HAS_ROLE = "sys_user_has_role";
+HackathonExternalRegConstants.SN_COMMUNITIES_PROFILE = "sn_communities_profile";
+HackathonExternalRegConstants.CSP_PORTAL_ID = "2086b814c3221200f3897bfaa2d3aea8";
+HackathonExternalRegConstants.COMMUNITY_PORTAL_ID = "5b49418bdb4aa200b1f6f78eaf96195f";
+HackathonExternalRegConstants.VAM_PORTAL_ID = "903eb8e553212010733addeeff7b1246"; 
+HackathonExternalRegConstants.PSP_PORTAL_ID = "9301b3a9bdd73010f8772b09d7aaaf2e";
+HackathonExternalRegConstants.GSP_PORTAL_ID = "41082b347710011034422a22fe5a9963";
+
+// Table/ Field constants
+HackathonExternalRegConstants.USER_REGISTRATION_REQUEST_TABLE = "user_registration_request";
+HackathonExternalRegConstants.LIVE_PROFILE = "live_profile";
+HackathonExternalRegConstants.SYS_USER = "sys_user";
+HackathonExternalRegConstants.CUSTOMER_CONTACT = "customer_contact";
+HackathonExternalRegConstants.CUSTOMER_COMMUNITES_USER = "sn_customer_communities_user";
+HackathonExternalRegConstants.CUSTOMER_SERVICE_USER = "csm_consumer_user"; 
+HackathonExternalRegConstants.CUSTOMER_SERVICE_CONSUMER = "csm_consumer"; 
+HackathonExternalRegConstants.SYS_USER_HAS_ROLE = 'sys_user_has_role';
+HackathonExternalRegConstants.USR_GRP_MEMBER = 'sys_user_grmember';
+HackathonExternalRegConstants.SYS_USER_GROUP = 'sys_user_group';
+HackathonExternalRegConstants.ROLE = 'sys_user_role';
+
+//External user registration table selection 
+HackathonExternalRegConstants.USER_REGISTRATION_REQUEST = (typeof ExternalRegZbootConstants == 'undefined') ? HackathonExternalRegConstants.USER_REGISTRATION_REQUEST_TABLE : ExternalRegZbootConstants.EXTERNAL_USER_REGISTRATION_REQUEST_TABLE;
+
+// The following represent the registration status of the user. 
+HackathonExternalRegConstants.REGISTRATION_PENDING = 1;
+HackathonExternalRegConstants.REGISTERED = 2;
+HackathonExternalRegConstants.EXPIRED = 3;
+
+HackathonExternalRegConstants.COMMUNITY_USER = 'sn_communities.community_user';
+HackathonExternalRegConstants.EXTERNAL_USER = 'sn_ext_usr_reg.sn_external_user';
+
+HackathonExternalRegConstants.HACKATHON_USER_REGISTRATION_REQUEST_TABLE = "sn_ext_usr_reg_request";
+
+//response status CODES
+HackathonExternalRegConstants.ERROR="error";
+HackathonExternalRegConstants.SUCCESS="success";
+HackathonExternalRegConstants.REQUEST_VALIDATION="reqValidation";
+HackathonExternalRegConstants.SUCESS_REGISTRATION="successRgistration";
+HackathonExternalRegConstants.REQUEST_MAX_OUT="reqMaxout";
+HackathonExternalRegConstants.RECORD_FOUND="recFound";
+HackathonExternalRegConstants.RESEND_LINK="reSendLink";
+HackathonExternalRegConstants.INVALID_REQUEST="invalidReq";
+HackathonExternalRegConstants.INVALID_LINK="invalidLink";
+HackathonExternalRegConstants.SUCCESS_REQ="reqSuccess";
+
+//Flags for field update
+HackathonExternalRegConstants.PASSWORD_UPDATE_ENABLED = "pwdUpdateEnabled";
+HackathonExternalRegConstants.PASSWORD_UPDATE_DISABLED = "pwdUpdateDisabled";
+
+var strong_tag_start="<strong>";
+var strong_tag_end="</strong>";
+var suc_reg_text1=gs.getMessage("You have successfully registered. ");
+var suc_reg_text2="?id=community_login";
+var suc_reg_text3=gs.getMessage("Click here");
+var suc_reg_text4=gs.getMessage(" to login");
+var req_max_text1=gs.getMessage("You have maxed out on the number of Confirmation Links per user.");
+var req_max_text2=gs.getMessage(" Please try registering again later");
+var rec_found_text1=gs.getMessage("You are already registered with the system.");
+var rec_found_text2=gs.getMessage(" Please ");
+var rec_found_text3=gs.getMessage("login");
+var rec_found_text4=gs.getMessage(" with your credentials to access portal");
+var inv_req_text1=gs.getMessage("There was an error proccessing the Link.");
+var inv_req_text2=gs.getMessage(" Please use valid link");
+var inv_link_text1=gs.getMessage("This Confirmation Link has expired.");
+var inv_link_text2=gs.getMessage(" Please register again ");
+var inv_link_text3="?id=community_external_user_registration";
+var inv_link_text4=gs.getMessage("here");
+var req_validation_text = gs.getMessage("The email you entered is awaiting activation. Check your email for the activation link. Click here to resend it.");
+
+HackathonExternalRegConstants.REQUEST_VALIDATION_MESSAGE =gs.getMessage("We have sent a verification link to your registered email:{0}. Complete your registration using the link.");
+HackathonExternalRegConstants.SUCESS_REGISTRATION_MESSAGE =  suc_reg_text1  ;
+HackathonExternalRegConstants.REQUEST_MAX_OUT_MESSAGE = req_max_text1 + req_max_text2;
+HackathonExternalRegConstants.RECORD_FOUND_MESSAGE = rec_found_text1  ;
+HackathonExternalRegConstants.RESEND_LINK_MESSAGE =  req_validation_text;
+HackathonExternalRegConstants.INVALID_REQUEST_MESSAGE = inv_req_text1 + inv_req_text2;
+HackathonExternalRegConstants.INVALID_LINK_MESSAGE =  inv_link_text1 + inv_link_text2 ;
+HackathonExternalRegConstants.SUCCESS_REQ_MESSAGE = gs.getMessage("We have sent an email to:{0}. Please check the email for further action.");
+
+
+HackathonExternalRegConstants.EXISTING_CSP_USER_MESSAGE=gs.getMessage("Please note that you are already registered on CSP portal. Try login using portal credentials.");
+
+HackathonExternalRegConstants.EXISTING_COMMUNITY_USER_MESSAGE=gs.getMessage("Please note that you are already registered on Communities portal. Try login using Communities credentials.");]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-15 06:42:02</sys_created_on>
+        <sys_id>501f4df8c3c4b210a4e87205e4013174</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>HackathonExternalRegConstants</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_script_include_501f4df8c3c4b210a4e87205e4013174</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-15 12:32:01</sys_updated_on>
+    </sys_script_include>
+</record_update>

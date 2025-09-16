@@ -145,7 +145,7 @@
 			inputObj._tc_number = c.data._tc_number;
 
 
-			var resourceUrl = '/api/now/externaluser/register';
+			var resourceUrl = '/api/x_1097288_hacktaho/hackathon_register';
 			$http.post(resourceUrl, inputObj)
 				.then(function(resp) {
 				window.location.href = "/" + c.data.portal_url_suffix + "?id=" + c.data.landing_page + "&register_response=" + resp.data.result.message;
@@ -372,7 +372,7 @@ a:hover{
       "https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit&hl=" +
       gs.getSession().getLanguage();
     data.enableCaptcha = gs.getProperty(data.captcha_prop, "true");
-    data.captchaSiteKey = gs.getProperty("google.captcha.site_key");
+    data.captchaSiteKey = gs.getProperty("x_1097288_hacktaho.hackathon.google.captcha.site_key");
     data.cred_sysid =
       options.cred_sysid ||
       gs.getProperty(
@@ -472,10 +472,10 @@ a:hover{
       var pwdRuleHints = passwordUtil.getPasswordRules(data.procId);
 
       if (pwdRuleHints.rulesWithRegex || pwdRuleHints.rulesWithoutRegex) {
-        var pwdRules = [
-          ...pwdRuleHints.rulesWithRegex,
-          ...pwdRuleHints.rulesWithoutRegex,
-        ];
+        var pwdRules = [].concat(
+  				pwdRuleHints.rulesWithRegex || [],
+  				pwdRuleHints.rulesWithoutRegex || []
+				);
         var hints = liStartTagString + pwdRules[0].hint + liEndTagString;
         for (var j = 1; j < pwdRules.length; j++) {
           hints = hints.concat(
@@ -512,14 +512,14 @@ a:hover{
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-09-14 10:15:29</sys_created_on>
         <sys_id>5156b46cc3c43210a4e87205e40131b2</sys_id>
-        <sys_mod_count>5</sys_mod_count>
+        <sys_mod_count>7</sys_mod_count>
         <sys_name>Registration Request - HCK</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_widget_5156b46cc3c43210a4e87205e40131b2</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-14 11:00:55</sys_updated_on>
+        <sys_updated_on>2025-09-15 13:36:55</sys_updated_on>
         <template><![CDATA[<!--panel-body reg-body-->
 <!--<div ng-if="data.has_extrnl_plugin">-->
 <div id="reg-form" class="col-lg-8 col-md-8 col-sm-12 col-xs-12 panel-body" ng-if="::!c.data.isloggedIn">

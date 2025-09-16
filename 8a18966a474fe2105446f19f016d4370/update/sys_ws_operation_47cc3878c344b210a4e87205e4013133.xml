@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json,application/xml,text/xml</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl/>
+        <http_method>POST</http_method>
+        <name>Register New User</name>
+        <operation_script><![CDATA[(function process( /*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+
+    var token = request.body.data.grc;
+	
+	// gs.info("Token "+JSON.stringify(request.body.data));
+
+    var secret = gs.getProperty('x_1097288_hacktaho.hackathon.google.captcha.secret');
+
+    var r = new sn_ws.RESTMessageV2();
+    r.setEndpoint('https://www.google.com/recaptcha/api/siteverify');
+    r.setHttpMethod('POST');
+    r.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    r.setRequestBody("secret=" + encodeURIComponent(secret) + "&response=" + encodeURIComponent(token));
+
+    var googleResponse = r.execute();
+    var result = JSON.parse(googleResponse.getBody());
+
+	// gs.info(JSON.stringify(result));
+	// result.success = true;
+
+    if (result.success) {
+		// gs.info("TEST:"+request.body.data.portal_id);
+		var hackathonRegistraitonUtils = new HackathonExternalUserManagmentUtils(request.body.data.portal_id);
+		var hackathonResponse = JSON.parse(hackathonRegistraitonUtils.registerUser(request.body.data));
+
+		gs.getSession().putClientData("reg_resp_message",hackathonResponse.message_txt);
+        gs.getSession().putClientData("reg_resp_status",hackathonResponse.status);
+        gs.getSession().putClientData("reg_user_name",request.body.data.email);
+
+		// gs.info("TESTRUB"+JSON.stringify(hackathonResponse));
+
+		return hackathonResponse;
+
+        // return {
+        //     message: HackathonExternalRegConstants.SUCCESS_REQ,
+        //     message_text: HackathonExternalRegConstants.SUCCESS_REQ_MESSAGE,
+        //     status: HackathonExternalRegConstants.SUCCESS
+        // };
+    } else {
+        return {
+			message: HackathonGoogleCaptchaUtils.INVALID_GRC,
+			message_text: HackathonGoogleCaptchaUtils.INVALID_GRC_MESSAGE,
+			status: HackathonGoogleCaptchaUtils.ERROR
+		};
+    }
+
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_1097288_hacktaho/hackathon_register</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/</relative_path>
+        <request_example/>
+        <requires_acl_authorization>false</requires_acl_authorization>
+        <requires_authentication>false</requires_authentication>
+        <requires_snc_internal_role>false</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-15 05:22:26</sys_created_on>
+        <sys_id>47cc3878c344b210a4e87205e4013133</sys_id>
+        <sys_mod_count>31</sys_mod_count>
+        <sys_name>Register New User</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_ws_operation_47cc3878c344b210a4e87205e4013133</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-15 15:28:24</sys_updated_on>
+        <web_service_definition display_value="Hackathon Register">a76c3c38c344b210a4e87205e401313a</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>

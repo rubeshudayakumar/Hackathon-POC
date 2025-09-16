@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_properties">
+    <sys_properties action="INSERT_OR_UPDATE">
+        <choices/>
+        <description/>
+        <ignore_cache>true</ignore_cache>
+        <is_private>false</is_private>
+        <name>x_1097288_hacktaho.hackathon.google.captcha.secret</name>
+        <read_roles/>
+        <suffix>hackathon.google.captcha.secret</suffix>
+        <sys_class_name>sys_properties</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-15 05:47:14</sys_created_on>
+        <sys_id>ef620df0c384b210a4e87205e401310f</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>x_1097288_hacktaho.hackathon.google.captcha.secret</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_properties_ef620df0c384b210a4e87205e401310f</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-15 06:06:32</sys_updated_on>
+        <type>password2</type>
+        <value>{{dflt-gpaes}}awMcqIv4/a4RKcgNcmXWxMRgv48Q6iWwjiOuMYVS/PO/3C/hGHj7g5VKjA8TJWVV</value>
+        <write_roles/>
+    </sys_properties>
+    <sys_translated_text action="delete_multiple" query="documentkey=ef620df0c384b210a4e87205e401310f"/>
+</record_update>

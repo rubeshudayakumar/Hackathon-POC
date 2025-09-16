@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function($scope, $uibModal, $location, $window,spUtil, $timeout) {
+	var c = this;
+	//intialize
+	
+	if(c.data.infoMessage) {
+		spUtil.addInfoMessage(c.data.infoMessage);
+	
+		$timeout(function() {
+			$("#uiNotificationContainer").find(".alert-msg").attr("tabindex",0);
+			$("#uiNotificationContainer").find(".alert-msg").attr("role","group");
+			$("#uiNotificationContainer").find(".alert-msg").focus();
+		});
+	}
+	
+	var parentContainerConfig = c.data.parentContainerConfig;
+	if (c.data.showModal){
+		if(c.data.isCSPPortal && parentContainerConfig && ((parentContainerConfig["parent_container_class"] == "hidden-xs" && screen.width >= 768) || (parentContainerConfig["parent_container_class"] == "visible-xs" && screen.width < 768))) {
+			$scope.modalInstance = $uibModal.open({
+				templateUrl: 'externalRegistrationResponseModal',
+				scope: $scope, 
+			});
+		}
+	}
+	
+	c.login = function () {
+		$scope.modalInstance.close();
+		$location.url('?id='+ c.data.login_page);
+	};
+	
+	c.cancel = function() {
+		$scope.modalInstance.close();
+	};
+	
+	var deregisterListener;
+	if(!c.data.isLoggedIn) {
+		deregisterListener = $rootScope.$on('$locationChangeStart', function (event, next, current) {
+			var	finalUrl = $rootScope.portal.url_suffix ;
+			$window.sessionStorage.setItem('navBackUri', '/'+ finalUrl);
+			deregisterListener();
+		});	
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.panel-bg-white {&#13;
+  background: $panel-bg-white;&#13;
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>true</has_preview>
+        <id>hackathon-external-registration-response</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Hackathon External Registration Response</name>
+        <option_schema/>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function () {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+  /*If GlideRecord/GlideRecordSecure is called, please follow the below guidelines,
+	Remediation
+	------------------
+	1. If possible, set the widget non-public, i.e. "<public>false<public>". Assess if the widget needs to be really public.
+	2. If possible, restrict the table names passed into GlideRecord/GlideRecordSecure. This can be done by completely hardcoding the table name.
+	3. As a last resort, ensure the table accessed by the GlideRecord/GlideRecordSecure object are explicitly defined in the "Public Table Allow List" in related list section of the widget. And also make security API call before the GlideRecord/GlideRecordSecure call.
+	Below is sample example code for calling secure API
+	-----------------------------------------------------------------------------------------------------------------------------------------
+	if(!new global.SPWidgetAccessControl().hasPublicAccess(options.table, $sp, options, input)){
+		gs.warn("Deny access to table which is not public: " + options.table);
+		data.isValid = false;
+		return;
+	}
+	var gr = new GlideRecordSecure(options.table);*/
+  data.ERROR = "error";
+  data.SUCCESS = "success";
+  data.isLoggedIn = gs.getSession().isLoggedIn();
+  data.isCSPPortal =
+    $sp.getPortalRecord().getValue("sys_id") ==
+    HackathonExternalRegConstants.CSP_PORTAL_ID;
+  data.parentContainerConfig = options.widget_parameters
+    ? JSON.parse(options.widget_parameters)
+    : "";
+
+  if (!data.isLoggedIn) {
+    data.register_response = $sp.getParameter("register_response");
+    if (data.register_response) {
+      var msg_response = gs.getSession().getClientData("reg_resp_message"),
+        msg_status = gs.getSession().getClientData("reg_resp_status"),
+        userName = gs.getSession().getClientData("reg_user_name");
+      gs.getSession().putClientData("reg_resp_message", "");
+      gs.getSession().putClientData("reg_resp_status", "");
+
+      gs.info(
+        "msg_response: " +
+          msg_response +
+          ", msg_status: " +
+          msg_status +
+          ", userName: " +
+          userName
+      );
+
+      if (msg_status == data.SUCCESS) {
+        if (data.register_response != HackathonExternalRegConstants.SUCESS_REGISTRATION)
+          data.infoMessage = msg_response;
+        else if (!data.isCSPPortal) data.infoMessage = msg_response;
+      } else if (msg_status == data.ERROR) gs.addErrorMessage(msg_response);
+      if (
+        data.isCSPPortal &&
+        data.register_response ==
+          HackathonExternalRegConstants.SUCESS_REGISTRATION &&
+        !gs.nil(userName)
+      ) {
+        var userId = "<br/><b>" + userName + "</b>";
+        data.msg = {};
+        data.msg.greet = gs.getMessage("Congratulations!");
+        data.msg.successText = gs.getMessage(
+          "You have successfully registered with Username: {0}",
+          userId
+        );
+        data.msg.loginText = gs.getMessage("Please click here to login");
+        data.showModal = true;
+        data.login_page = $sp.getDisplayValue("login_page") || "csm_login";
+        if (!data.login_page) data.login_page = "login";
+      }
+    }
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-15 14:20:38</sys_created_on>
+        <sys_id>0e083ebcc3c0f210a4e87205e4013134</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>Hackathon External Registration Response</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_0e083ebcc3c0f210a4e87205e4013134</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-15 14:42:09</sys_updated_on>
+        <template><![CDATA[<div></div>]]></template>
+    </sp_widget>
+</record_update>
