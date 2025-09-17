@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_email">
+    <sys_script_email action="INSERT_OR_UPDATE">
+        <name>hck_generate_registration_confirmation_link</name>
+        <new_lines_to_html>false</new_lines_to_html>
+        <script><![CDATA[(function runMailScript( /* GlideRecord */ current, /* TemplatePrinter */ template,
+    /* Optional EmailOutbound */
+    email, /* Optional GlideRecord */ email_action,
+    /* Optional GlideRecord */
+    event) {
+    var util = new HackathonExternalUserManagmentUtils(current.getValue('portal'));
+    var instanceBaseUrl = util.getInstanceBaseUrl(current.getValue('portal'), true);
+    instanceBaseUrl = instanceBaseUrl + current.portal.url_suffix;
+    var user = new GlideRecord(HackathonExternalRegConstants.HACKATHON_USER_REGISTRATION_REQUEST_TABLE);
+    user.addQuery("email", '=', current.getDisplayValue('email'));
+    user.addQuery("portal", current.getValue("portal"));
+    user.addQuery("state", HackathonExternalRegConstants.REGISTRATION_PENDING);
+	user.setLimit(1);
+    user.query();
+    if (user.next()) {
+        var encoded_token = encodeURIComponent(user.token);
+        var url = instanceBaseUrl + "?id=hck_registration_validation&guid=" + encoded_token;
+        template.print("<a href=" + url + ">click here</a>");
+    }
+})(current, template, email, email_action, event);]]></script>
+        <sys_class_name>sys_script_email</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:44:55</sys_created_on>
+        <sys_id>eee45c1dc3c87610a4e87205e4013181</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>hck_generate_registration_confirmation_link</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sys_script_email_eee45c1dc3c87610a4e87205e4013181</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-16 15:57:24</sys_updated_on>
+    </sys_script_email>
+</record_update>

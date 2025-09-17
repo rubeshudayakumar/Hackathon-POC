@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="sysevent_email_action">
     <sysevent_email_action action="INSERT_OR_UPDATE">
-        <action_insert>false</action_insert>
-        <action_update>true</action_update>
-        <active>true</active>
+        <action_insert>true</action_insert>
+        <action_update>false</action_update>
+        <active>false</active>
         <advanced_condition/>
         <affected_field_on_event/>
         <category display_value="Community" name="Community">e6b40f6213f0720062735cb63244b05c</category>
         <collection>sn_ext_usr_reg_request</collection>
-        <condition table="sn_ext_usr_reg_request">state=1^request_count&lt;=4^password!=^portal!=903eb8e553212010733addeeff7b1246^portal!=9301b3a9bdd73010f8772b09d7aaaf2e^portal!=41082b347710011034422a22fe5a9963^EQ<item display_value="Registration Pending" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="1"/>
+        <condition table="sn_ext_usr_reg_request">state=1^request_count&lt;=4^portal!=903eb8e553212010733addeeff7b1246^portal!=9301b3a9bdd73010f8772b09d7aaaf2e^portal!=41082b347710011034422a22fe5a9963^portal=2eb668c7c3ef2610a4e87205e4013137^EQ<item display_value="Registration Pending" endquery="false" field="state" goto="false" newquery="false" operator="=" or="false" value="1"/>
             <item endquery="false" field="request_count" goto="false" newquery="false" operator="&lt;=" or="false" value="4"/>
-            <item endquery="false" field="password" goto="false" newquery="false" operator="!=" or="false" value=""/>
             <item endquery="false" field="portal" goto="false" newquery="false" operator="!=" or="false" value="903eb8e553212010733addeeff7b1246"/>
             <item endquery="false" field="portal" goto="false" newquery="false" operator="!=" or="false" value="9301b3a9bdd73010f8772b09d7aaaf2e"/>
             <item endquery="false" field="portal" goto="false" newquery="false" operator="!=" or="false" value="41082b347710011034422a22fe5a9963"/>
+            <item display_table="sp_portal" display_value="Hackathon - EXT" endquery="false" field="portal" goto="false" newquery="false" operator="=" or="false" value="2eb668c7c3ef2610a4e87205e4013137"/>
             <item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/>
         </condition>
         <content_type>text/html</content_type>
@@ -67,7 +67,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>bc8f03b8c384f210a4e87205e4013163</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>8</sys_mod_count>
         <sys_name>External User Confirmation Link - HCK</sys_name>
         <sys_overrides/>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
@@ -75,9 +75,9 @@
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sysevent_email_action_bc8f03b8c384f210a4e87205e4013163</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-15 16:15:33</sys_updated_on>
+        <sys_updated_on>2025-09-17 03:55:25</sys_updated_on>
         <sys_version>2</sys_version>
-        <template display_value="communities.ext.regn.confirm">3474baed23213010766713d1d7bf6502</template>
+        <template display_value="hck.ext.regn.confirm">7bfba868c3843210a4e87205e40131d4</template>
         <type>email</type>
         <weight>0</weight>
     </sysevent_email_action>

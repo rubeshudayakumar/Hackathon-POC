@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_rel_widget_clone">
+    <sp_rel_widget_clone action="INSERT_OR_UPDATE">
+        <child display_value="External User Activation - HCK">fa909c15c3c87610a4e87205e40131c0</child>
+        <cloned>2025-09-16 15:26:06</cloned>
+        <last_validated>2025-09-16 15:26:06</last_validated>
+        <parent display_value="External User Activation">8f88974e3b0f3200b5c42479b3efc4f7</parent>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;sp_widget&gt;&lt;category/&gt;&lt;client_script&gt;&lt;![CDATA[function ($scope, $window,$location) {
+	var c = this;
+	if(c.data.token &amp;&amp; c.data.token!='null'){
+	    var url="/"+c.data.portal_name+"?id="+c.data.landing_page+"&amp;register_response="+c.data.message;
+	    $location.url(url);
+	}
+}]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css/&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;false&lt;/has_preview&gt;&lt;id&gt;external-user-activation&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link/&gt;&lt;name&gt;External User Activation&lt;/name&gt;&lt;option_schema&gt;[{"name":"landing_page","default_value":"community_home","label":"Landing Page","type":"string"},{"name":"portal_name","default_value":"community","label":"Portal Name","type":"string"},{"name":"login_page","default_value":"community_login","label":"Login Page","type":"string"}]&amp;#13;
+&lt;/option_schema&gt;&lt;public&gt;true&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+
+/*If GlideRecord/GlideRecordSecure is called, please follow the below guidelines,
+	Remediation
+	------------------
+	1. If possible, set the widget non-public, i.e. "&lt;public&gt;false&lt;public&gt;". Assess if the widget needs to be really public.
+	2. If possible, restrict the table names passed into GlideRecord/GlideRecordSecure. This can be done by completely hardcoding the table name.
+	3. As a last resort, ensure the table accessed by the GlideRecord/GlideRecordSecure object are explicitly defined in the "Public Table Allow List" in related list section of the widget. And also make security API call before the GlideRecord/GlideRecordSecure call.
+	Below is sample example code for calling secure API
+	-----------------------------------------------------------------------------------------------------------------------------------------
+	if(!new global.SPWidgetAccessControl().hasPublicAccess(options.table, $sp, options, input)){
+		gs.warn("Deny access to table which is not public: " + options.table);
+		data.isValid = false;
+		return;
+	}
+	var gr = new GlideRecordSecure(options.table);*/
+    if (gs.isLoggedIn()) {
+        var gr = new GlideRecord('v_user_session');
+        gr.get('session_id', gs.getSession().sessionID);
+        gr.locked = true;
+        gr.update();
+    }
+    data.instance_name = gs.getProperty('glide.servlet.uri');
+    data.token = $sp.getParameter('guid');
+    data.token = decodeURIComponent(data.token);
+    if (data.token) {
+        var portal_id = $sp.getPortalRecord().getValue("sys_id");
+        data.portal_name = $sp.getPortalRecord().getValue("url_suffix") + '';
+        data.landing_page = $sp.getPortalRecord().homepage.id + '';
+        data.login_page = $sp.getPortalRecord().login_page.id + '';
+        var external_user_utils = new sn_ext_usr_reg.ExternalUserManagmentUtils(portal_id);
+        var act_response = external_user_utils.activateUserAccount(data.token);
+        data.message = act_response.message;
+        data.message_txt = act_response.message_txt;
+        data.status = act_response.status;
+        gs.getSession().putClientData("reg_resp_message", data.message_txt);
+        gs.getSession().putClientData("reg_resp_status", data.status);
+        data.sysuser_id = act_response.sysuser_id;
+        var user = new GlideRecord('sys_user');
+        user.get(data.sysuser_id);
+        data.userName = user.user_name + "";
+	gs.getSession().putClientData("reg_user_name", data.userName);
+        if (portal_id == ExternalRegConstants.COMMUNITY_PORTAL_ID &amp;&amp; data.sysuser_id) {
+            var global_utils = new global.CommunityGlobalUtilSNC();
+            var lprofile_id = global_utils._createLiveProfile(data.sysuser_id);
+        }
+    } else {
+        data.message_txt = ExternalRegConstants.INVALID_REQUEST_MESSAGE;
+        data.message = ExternalRegConstants.INVALID_REQUEST;
+        data.status = ExternalRegConstants.ERROR;
+    }
+    return data;
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;false&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2017-06-01 06:06:14&lt;/sys_created_on&gt;&lt;sys_id&gt;8f88974e3b0f3200b5c42479b3efc4f7&lt;/sys_id&gt;&lt;sys_mod_count&gt;147&lt;/sys_mod_count&gt;&lt;sys_name&gt;External User Activation&lt;/sys_name&gt;&lt;sys_package display_value="External User Registration" source="sn_ext_usr_reg"&gt;9e42ed323b923200b5c42479b3efc4bd&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="External User Registration"&gt;9e42ed323b923200b5c42479b3efc4bd&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_8f88974e3b0f3200b5c42479b3efc4f7&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2024-02-28 08:26:32&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div ng-if = "c.data.showSuccessPage"&gt;
+&lt;!-- your widget template --&gt;
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;</payload>
+        <sys_class_name>sp_rel_widget_clone</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:26:06</sys_created_on>
+        <sys_id>fe909c15c3c87610a4e87205e40131c3</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>fa909c15c3c87610a4e87205e40131c0</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_rel_widget_clone_fe909c15c3c87610a4e87205e40131c3</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-16 15:26:06</sys_updated_on>
+    </sp_rel_widget_clone>
+</record_update>

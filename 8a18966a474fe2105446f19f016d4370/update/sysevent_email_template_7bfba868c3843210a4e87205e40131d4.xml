@@ -29,7 +29,7 @@
 <p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"><span class="s1" style="font-kerning: none; font-family: arial, helvetica, sans-serif;">Hello ${mail_script:title_Case_fn}</span></p>
 <p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;">&nbsp;</p>
 <p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">You recently asked to join our&nbsp;${portal.title} . We need to validate your email address in order to verify your account and provide access to the ${portal.title}.</span><span style="font-family: arial, helvetica, sans-serif;"><br><br></span></p>
-<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Please&nbsp;${mail_script:generate_registration_confirmation_link}&nbsp;to validate your email.</span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Please ${mail_script:hck_generate_registration_confirmation_link} to validate your email.</span></p>
 <p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Email: ${email}<br></span></p>
 <p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Username: ${userid}</span></p>
 <p class="p1"><span style="font-family: arial, helvetica, sans-serif;">&nbsp;</span></p>
@@ -57,14 +57,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-09-14 09:30:20</sys_created_on>
         <sys_id>7bfba868c3843210a4e87205e40131d4</sys_id>
-        <sys_mod_count>1</sys_mod_count>
+        <sys_mod_count>2</sys_mod_count>
         <sys_name>hck.ext.regn.confirm</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sysevent_email_template_7bfba868c3843210a4e87205e40131d4</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-14 09:30:29</sys_updated_on>
+        <sys_updated_on>2025-09-16 15:46:07</sys_updated_on>
         <sys_version>2</sys_version>
     </sysevent_email_template>
 </record_update>

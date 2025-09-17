@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[function ($scope, $window,$location) {
+	var c = this;
+	if(c.data.token && c.data.token!='null'){
+	    var url="/"+c.data.portal_name+"?id="+c.data.landing_page+"&register_response="+c.data.message;
+	    $location.url(url);
+	}
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css/>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>external_user_activation_hck</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {  }]]></link>
+        <name>External User Activation - HCK</name>
+        <option_schema>[{"name":"landing_page","default_value":"community_home","label":"Landing Page","type":"string"},{"name":"portal_name","default_value":"community","label":"Portal Name","type":"string"},{"name":"login_page","default_value":"community_login","label":"Login Page","type":"string"}]&#13;
+</option_schema>
+        <public>true</public>
+        <roles/>
+        <script><![CDATA[(function() {
+
+/*If GlideRecord/GlideRecordSecure is called, please follow the below guidelines,
+	Remediation
+	------------------
+	1. If possible, set the widget non-public, i.e. "<public>false<public>". Assess if the widget needs to be really public.
+	2. If possible, restrict the table names passed into GlideRecord/GlideRecordSecure. This can be done by completely hardcoding the table name.
+	3. As a last resort, ensure the table accessed by the GlideRecord/GlideRecordSecure object are explicitly defined in the "Public Table Allow List" in related list section of the widget. And also make security API call before the GlideRecord/GlideRecordSecure call.
+	Below is sample example code for calling secure API
+	-----------------------------------------------------------------------------------------------------------------------------------------
+	if(!new global.SPWidgetAccessControl().hasPublicAccess(options.table, $sp, options, input)){
+		gs.warn("Deny access to table which is not public: " + options.table);
+		data.isValid = false;
+		return;
+	}
+	var gr = new GlideRecordSecure(options.table);*/
+    if (gs.isLoggedIn()) {
+        var gr = new GlideRecord('v_user_session');
+        gr.get('session_id', gs.getSession().sessionID);
+        gr.locked = true;
+        gr.update();
+    }
+    data.instance_name = gs.getProperty('glide.servlet.uri');
+    data.token = $sp.getParameter('guid');
+    data.token = decodeURIComponent(data.token);
+    if (data.token) {
+        var portal_id = $sp.getPortalRecord().getValue("sys_id");
+        data.portal_name = $sp.getPortalRecord().getValue("url_suffix") + '';
+        data.landing_page = $sp.getPortalRecord().homepage.id + '';
+        data.login_page = $sp.getPortalRecord().login_page.id + '';
+        var external_user_utils = new HackathonExternalUserManagmentUtils(portal_id);
+        var act_response = external_user_utils.activateUserAccount(data.token);
+        data.message = act_response.message;
+        data.message_txt = act_response.message_txt;
+        data.status = act_response.status;
+        gs.getSession().putClientData("reg_resp_message", data.message_txt);
+        gs.getSession().putClientData("reg_resp_status", data.status);
+        data.sysuser_id = act_response.sysuser_id;
+        var user = new GlideRecord('sys_user');
+        user.get(data.sysuser_id);
+        data.userName = user.user_name + "";
+	gs.getSession().putClientData("reg_user_name", data.userName);
+        //if (portal_id == ExternalRegConstants.COMMUNITY_PORTAL_ID && data.sysuser_id) {
+          //  var global_utils = new global.CommunityGlobalUtilSNC();
+            //var lprofile_id = global_utils._createLiveProfile(data.sysuser_id);
+        //}
+    } else {
+        data.message_txt = HackathonExternalRegConstants.INVALID_REQUEST_MESSAGE;
+        data.message = HackathonExternalRegConstants.INVALID_REQUEST;
+        data.status = HackathonExternalRegConstants.ERROR;
+    }
+    return data;
+})();]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:26:06</sys_created_on>
+        <sys_id>fa909c15c3c87610a4e87205e40131c0</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>External User Activation - HCK</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_fa909c15c3c87610a4e87205e40131c0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-17 02:22:23</sys_updated_on>
+        <template><![CDATA[<div ng-if = "c.data.showSuccessPage">
+<!-- your widget template -->
+</div>]]></template>
+    </sp_widget>
+</record_update>

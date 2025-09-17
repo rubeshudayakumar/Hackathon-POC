@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sysevent_email_template">
+    <sysevent_email_template action="DELETE">
+        <collection>sn_ext_usr_reg_request</collection>
+        <email_layout/>
+        <message/>
+        <message_html><![CDATA[<p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"><br>&nbsp;</p>
+<div style="color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 17px;">
+<table id="backgroundTable" style="font-size: 17px; line-height: 100%; color: #424e5b; background: #F9F9F9; width: 100%; margin: 0; padding: 0; border-collapse: collapse; mso-table-lspace: 0;" border="0" width="100%" cellpadding="0">
+<tbody>
+<tr>
+<td style="border-collapse: collapse;" valign="top">
+<table id="header" style="width: 100%; margin: 0 auto; border-collapse: collapse; mso-table-lspace: 0;" border="0" width="100%" cellpadding="0">
+<tbody>
+<tr>
+<td style="padding: 20px 16px 12px; border-collapse: collapse;" valign="bottom">
+<div class="full-width text-center" style="max-width: 600px; margin: 0 auto; text-align: center;"><img style="align: baseline; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;" title="" src="/sn-logo-dark-green-email.pngx" alt="ServiceNow" width="226px" height="38px" align="baseline" border="" hspace="" vspace=""></div>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td style="border-collapse: collapse;" valign="top">
+<div class="full-width" style="max-width: 600px; margin: 0 auto;">
+<div class="card" style="background: #FFF; border-radius: 0.5rem; padding: 2rem; margin-bottom: 1rem;">
+<p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"><span class="s1" style="font-kerning: none; font-family: arial, helvetica, sans-serif;">Hello ${mail_script:title_Case_fn}</span></p>
+<p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;">&nbsp;</p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">You recently asked to join our&nbsp;${portal.title} . We need to validate your email address in order to verify your account and provide access to the ${portal.title}.</span><span style="font-family: arial, helvetica, sans-serif;"><br><br></span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Please&nbsp;${mail_script:generate_registration_confirmation_link}&nbsp;to validate your email.</span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Email: ${email}<br></span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Username: ${userid}</span></p>
+<p class="p1"><span style="font-family: arial, helvetica, sans-serif;">&nbsp;</span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">If you didn't recently ask to join our&nbsp; ${portal.title} ,please disregard this email.</span></p>
+<p class="p1"><span style="font-family: arial, helvetica, sans-serif;">&nbsp;</span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">Thank you,</span></p>
+<p class="p1"><span class="s1" style="font-family: arial, helvetica, sans-serif;">${portal.title} Admin</span></p>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;">&nbsp;</p>
+<p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;">&nbsp;</p>
+<p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;">&nbsp;</p>
+<p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;">&nbsp;</p>]]></message_html>
+        <message_list/>
+        <message_text/>
+        <name>hck.ext.regn.confirm</name>
+        <sms_alternate/>
+        <subject>${portal.title} registration confirmation </subject>
+        <sys_class_name>sysevent_email_template</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:29:04</sys_created_on>
+        <sys_id>9e411495c3c87610a4e87205e4013110</sys_id>
+        <sys_mod_count>1</sys_mod_count>
+        <sys_name>hck.ext.regn.confirm</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sysevent_email_template_9e411495c3c87610a4e87205e4013110</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-16 15:29:13</sys_updated_on>
+        <sys_version>2</sys_version>
+    </sysevent_email_template>
+    <sys_update_version action="INSERT_OR_UPDATE">
+        <action>DELETE</action>
+        <application display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</application>
+        <file_path/>
+        <instance_id>28ee2eabdba2f194b1eb9027c59619a5</instance_id>
+        <instance_name>dev221627</instance_name>
+        <name>sysevent_email_template_9e411495c3c87610a4e87205e4013110</name>
+        <payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sysevent_email_template"&gt;&lt;sysevent_email_template action="INSERT_OR_UPDATE"&gt;&lt;collection&gt;sn_ext_usr_reg_request&lt;/collection&gt;&lt;email_layout/&gt;&lt;message/&gt;&lt;message_html&gt;&lt;![CDATA[&lt;p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"&gt;&lt;br&gt;&amp;nbsp;&lt;/p&gt;
+&lt;div style="color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 17px;"&gt;
+&lt;table id="backgroundTable" style="font-size: 17px; line-height: 100%; color: #424e5b; background: #F9F9F9; width: 100%; margin: 0; padding: 0; border-collapse: collapse; mso-table-lspace: 0;" border="0" width="100%" cellpadding="0"&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="border-collapse: collapse;" valign="top"&gt;
+&lt;table id="header" style="width: 100%; margin: 0 auto; border-collapse: collapse; mso-table-lspace: 0;" border="0" width="100%" cellpadding="0"&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="padding: 20px 16px 12px; border-collapse: collapse;" valign="bottom"&gt;
+&lt;div class="full-width text-center" style="max-width: 600px; margin: 0 auto; text-align: center;"&gt;&lt;img style="align: baseline; outline: none; text-decoration: none; -ms-interpolation-mode: bicubic;" title="" src="/sn-logo-dark-green-email.pngx" alt="ServiceNow" width="226px" height="38px" align="baseline" border="" hspace="" vspace=""&gt;&lt;/div&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td style="border-collapse: collapse;" valign="top"&gt;
+&lt;div class="full-width" style="max-width: 600px; margin: 0 auto;"&gt;
+&lt;div class="card" style="background: #FFF; border-radius: 0.5rem; padding: 2rem; margin-bottom: 1rem;"&gt;
+&lt;p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"&gt;&lt;span class="s1" style="font-kerning: none; font-family: arial, helvetica, sans-serif;"&gt;Hello ${mail_script:title_Case_fn}&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1" style="margin: 0px; font-stretch: normal; line-height: normal; font-family: Courier;"&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;You recently asked to join our&amp;nbsp;${portal.title} . We need to validate your email address in order to verify your account and provide access to the ${portal.title}.&lt;/span&gt;&lt;span style="font-family: arial, helvetica, sans-serif;"&gt;&lt;br&gt;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;Please&amp;nbsp;${mail_script:generate_registration_confirmation_link}&amp;nbsp;to validate your email.&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;Email: ${email}&lt;br&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;Username: ${userid}&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span style="font-family: arial, helvetica, sans-serif;"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;If you didn't recently ask to join our&amp;nbsp; ${portal.title} ,please disregard this email.&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span style="font-family: arial, helvetica, sans-serif;"&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;Thank you,&lt;/span&gt;&lt;/p&gt;
+&lt;p class="p1"&gt;&lt;span class="s1" style="font-family: arial, helvetica, sans-serif;"&gt;${portal.title} Admin&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;"&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;"&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;"&gt;&amp;nbsp;&lt;/p&gt;
+&lt;p style="font-size: 17px; margin: 0px 0px 16px; line-height: 24px; color: #373737; font-family: SourceSansPro, 'Helvetica Neue', Helvetica, Arial, sans-serif;"&gt;&amp;nbsp;&lt;/p&gt;]]&gt;&lt;/message_html&gt;&lt;message_list/&gt;&lt;message_text/&gt;&lt;name&gt;hck.ext.regn.confirm&lt;/name&gt;&lt;sms_alternate/&gt;&lt;subject&gt;${portal.title} registration confirmation &lt;/subject&gt;&lt;sys_class_name&gt;sysevent_email_template&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2025-09-16 15:29:04&lt;/sys_created_on&gt;&lt;sys_id&gt;9e411495c3c87610a4e87205e4013110&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;hck.ext.regn.confirm&lt;/sys_name&gt;&lt;sys_package display_value="Hacktahon" source="x_1097288_hacktaho"&gt;8a18966a474fe2105446f19f016d4370&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Hacktahon"&gt;8a18966a474fe2105446f19f016d4370&lt;/sys_scope&gt;&lt;sys_update_name&gt;sysevent_email_template_9e411495c3c87610a4e87205e4013110&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2025-09-16 15:29:13&lt;/sys_updated_on&gt;&lt;sys_version&gt;2&lt;/sys_version&gt;&lt;/sysevent_email_template&gt;&lt;/record_update&gt;</payload>
+        <payload_hash>455922618</payload_hash>
+        <record_name>hck.ext.regn.confirm</record_name>
+        <reverted_from/>
+        <source>f9793c42c3232210a4e87205e40131e7</source>
+        <source_table>sys_update_set</source_table>
+        <state>previous</state>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:29:13</sys_created_on>
+        <sys_id>e0511495c3c87610a4e87205e40131c1</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_recorded_at>1995324ee340000001</sys_recorded_at>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-16 15:29:13</sys_updated_on>
+        <type>Email Template</type>
+        <update_guid>a4511495dfc87610ecbfeaa9d9d694c0</update_guid>
+        <update_guid_history>a4511495dfc87610ecbfeaa9d9d694c0:455922618,d641149512c876107570cbb85114c412:1753795639</update_guid_history>
+    </sys_update_version>
+    <sys_metadata_delete action="INSERT_OR_UPDATE">
+        <sys_audit_delete/>
+        <sys_class_name>sys_metadata_delete</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-09-16 15:30:18</sys_created_on>
+        <sys_db_object display_value="" name="sysevent_email_template">sysevent_email_template</sys_db_object>
+        <sys_id>4653ad9e55cb4c34bb692c0bc9cd2481</sys_id>
+        <sys_metadata>9e411495c3c87610a4e87205e4013110</sys_metadata>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>hck.ext.regn.confirm</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_parent display_value="Sn Ext Usr Reg Request">c5bcb22bc3ffa210a4e87205e40131b6</sys_parent>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_scope_delete display_value="">3665a42f6936434a9fd96ef45ddf9244</sys_scope_delete>
+        <sys_update_name>sysevent_email_template_9e411495c3c87610a4e87205e4013110</sys_update_name>
+        <sys_update_version display_value="sysevent_email_template_9e411495c3c87610a4e87205e4013110">e0511495c3c87610a4e87205e40131c1</sys_update_version>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-09-16 15:30:18</sys_updated_on>
+    </sys_metadata_delete>
+</record_update>

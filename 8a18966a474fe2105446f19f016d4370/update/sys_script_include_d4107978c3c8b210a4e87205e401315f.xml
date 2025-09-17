@@ -246,6 +246,14 @@ HackathonExternalUserManagmentUtils.prototype = {
         user.setValue('accepted_tc_date', new GlideDateTime());
         user.setValue("portal", this.portal_id);
         user.setValue("type", portal.title);
+
+		/**
+		 * Needs to be validated on out of box how they are storing the password
+		 */
+		// user.setValue("password",input.password);
+		user.password.setDisplayValue(input.password);
+
+
         var sys_id = user.insert();
         var secureRandom = GlideSecureRandomUtil;
         var new_token = sys_id + secureRandom.getSecureRandomString(10);
@@ -261,7 +269,7 @@ HackathonExternalUserManagmentUtils.prototype = {
 
 
     validateToken: function(token) {
-        var user = new GlideRecord(HackathonExternalRegConstants.USER_REGISTRATION_REQUEST);
+        var user = new GlideRecord(HackathonExternalRegConstants.HACKATHON_USER_REGISTRATION_REQUEST_TABLE);
         user.addQuery('token', token);
         user.addQuery("state", HackathonExternalRegConstants.REGISTRATION_PENDING);
         user.setLimit(1);
@@ -274,7 +282,7 @@ HackathonExternalUserManagmentUtils.prototype = {
         }
     },
     updateRegistrationState: function(email) {
-        var update_state = new GlideRecord(HackathonExternalRegConstants.USER_REGISTRATION_REQUEST);
+        var update_state = new GlideRecord(HackathonExternalRegConstants.HACKATHON_USER_REGISTRATION_REQUEST_TABLE);
         update_state.addQuery('email', email);
         update_state.addQuery('portal', '=', this.portal_id);
         update_state.addQuery('state', HackathonExternalRegConstants.REGISTRATION_PENDING);
@@ -286,7 +294,7 @@ HackathonExternalUserManagmentUtils.prototype = {
         }
     },
     userRecordCheck: function(email) {
-        var existing_user = new GlideRecord(this.lookup_table);
+        var existing_user = new GlideRecord("sys_user");
         existing_user.addQuery('email', email);
         existing_user.query();
         if (existing_user.next()) {
@@ -298,10 +306,10 @@ HackathonExternalUserManagmentUtils.prototype = {
     },
 
     createuser: function(user) {
-        if (this.is_csm_user_portal)
-            return this.createCSPUser(user);
-        else if (this.portal_id == HackathonExternalRegConstants.COMMUNITY_PORTAL_ID)
-            return this.createCommunityUser(user);
+        // if (this.is_csm_user_portal)
+        //     return this.createCSPUser(user);
+        // else if (this.portal_id == HackathonExternalRegConstants.COMMUNITY_PORTAL_ID)
+    	return this.createUserRecord(user);
     },
     activateUserAccount: function(token) {
         var act_response = {};
@@ -313,38 +321,38 @@ HackathonExternalUserManagmentUtils.prototype = {
             return act_response;
         }
         var sysUser = this.isExistingUser(user_obj.email);
-        if (!gs.nil(sysUser) && this.is_csm_user_portal && sysUser.sys_class_name == HackathonExternalRegConstants.CUSTOMER_COMMUNITES_USER) {
-            if (!gs.nil(this.isExistingCSPUser(user_obj.email))) {
-                act_response.message = HackathonExternalRegConstants.RECORD_FOUND;
-                act_response.message_txt = HackathonExternalRegConstants.RECORD_FOUND_MESSAGE;
-                act_response.status = HackathonExternalRegConstants.ERROR;
-                return act_response;
-            }
-            var community_user = new GlideRecord(HackathonExternalRegConstants.CUSTOMER_COMMUNITES_USER);
-            community_user.get(sysUser.sys_id);
-            var consumer_id = this.createOrGetConsumer(sysUser);
-            var consumer_rec = new GlideRecord("csm_consumer");
-            consumer_rec.get(consumer_id);
-            consumer_rec.setValue("community_user", community_user.sys_id);
-            consumer_rec.update();
+        // if (!gs.nil(sysUser) && this.is_csm_user_portal && sysUser.sys_class_name == HackathonExternalRegConstants.CUSTOMER_COMMUNITES_USER) {
+        //     if (!gs.nil(this.isExistingCSPUser(user_obj.email))) {
+        //         act_response.message = HackathonExternalRegConstants.RECORD_FOUND;
+        //         act_response.message_txt = HackathonExternalRegConstants.RECORD_FOUND_MESSAGE;
+        //         act_response.status = HackathonExternalRegConstants.ERROR;
+        //         return act_response;
+        //     }
+        //     var community_user = new GlideRecord(HackathonExternalRegConstants.CUSTOMER_COMMUNITES_USER);
+        //     community_user.get(sysUser.sys_id);
+        //     var consumer_id = this.createOrGetConsumer(sysUser);
+        //     var consumer_rec = new GlideRecord("csm_consumer");
+        //     consumer_rec.get(consumer_id);
+        //     consumer_rec.setValue("community_user", community_user.sys_id);
+        //     consumer_rec.update();
 
-            var uhr = new GlideRecord("sys_user_has_role");
-            uhr.initialize();
-            uhr.setValue("user", community_user.sys_id);
-            uhr.role.setDisplayValue("sn_customerservice.consumer");
-            uhr.insert();
-            act_response.message_txt = HackathonExternalRegConstants.SUCESS_REGISTRATION_MESSAGE;
-            act_response.message = HackathonExternalRegConstants.SUCESS_REGISTRATION;
-            act_response.status = HackathonExternalRegConstants.SUCCESS;
-            return act_response;
-        }
+        //     var uhr = new GlideRecord("sys_user_has_role");
+        //     uhr.initialize();
+        //     uhr.setValue("user", community_user.sys_id);
+        //     uhr.role.setDisplayValue("sn_customerservice.consumer");
+        //     uhr.insert();
+        //     act_response.message_txt = HackathonExternalRegConstants.SUCESS_REGISTRATION_MESSAGE;
+        //     act_response.message = HackathonExternalRegConstants.SUCESS_REGISTRATION;
+        //     act_response.status = HackathonExternalRegConstants.SUCCESS;
+        //     return act_response;
+        // }
 
-        if (!gs.nil(sysUser) && this.portal_id == HackathonExternalRegConstants.COMMUNITY_PORTAL_ID && sysUser.sys_class_name == HackathonExternalRegConstants.CUSTOMER_SERVICE_USER) {
-            act_response.message = HackathonExternalRegConstants.RECORD_FOUND;
-            act_response.message_txt = HackathonExternalRegConstants.RECORD_FOUND_MESSAGE;
-            act_response.status = HackathonExternalRegConstants.ERROR;
-            return act_response;
-        }
+        // if (!gs.nil(sysUser) && this.portal_id == HackathonExternalRegConstants.COMMUNITY_PORTAL_ID && sysUser.sys_class_name == HackathonExternalRegConstants.CUSTOMER_SERVICE_USER) {
+        //     act_response.message = HackathonExternalRegConstants.RECORD_FOUND;
+        //     act_response.message_txt = HackathonExternalRegConstants.RECORD_FOUND_MESSAGE;
+        //     act_response.status = HackathonExternalRegConstants.ERROR;
+        //     return act_response;
+        // }
 
         if (!gs.nil(user_obj) && user_obj.state != HackathonExternalRegConstants.EXPIRED) {
             if (user_obj.state == HackathonExternalRegConstants.REGISTERED) {
@@ -461,8 +469,8 @@ HackathonExternalUserManagmentUtils.prototype = {
 
 
     },
-    createCommunityUser: function(user) {
-        var user_rec = new GlideRecord(this.lookup_table);
+    createUserRecord: function(user) {
+        var user_rec = new GlideRecord("sys_user");
         user_rec.initialize();
         user_rec.setValue('email', user.email);
         user_rec.setValue('user_name', user.userid);
@@ -470,19 +478,21 @@ HackathonExternalUserManagmentUtils.prototype = {
         user_rec.setValue('middle_name', user.middle_name);
         user_rec.setValue('last_name', user.last_name);
         user_rec.setValue('phone', user.phone);
-        user_rec.setValue('user_password', user.password);
-        user_rec.setValue('accepted_tc', user.accepted_tc);
-        user_rec.setValue('accepted_tc_date', user.accepted_tc_date);
+        // user_rec.setValue('user_password', user.password);
+		// user_rec.user_password.setDisplayValue(user.password);  =====
+		user_rec.setValue("user_password",user.password);
+        // user_rec.setValue('accepted_tc', user.accepted_tc);
+        // user_rec.setValue('accepted_tc_date', user.accepted_tc_date);
         var user_id = user_rec.insert();
-        var uhr = new GlideRecord(HackathonExternalRegConstants.ROLE);
-        uhr.addQuery('name', HackathonExternalRegConstants.COMMUNITY_USER);
-        uhr.query();
-        if (uhr.next()) {
-            var add_role = new GlideRecord(HackathonExternalRegConstants.SYS_USER_HAS_ROLE);
-            add_role.user = user_id;
-            add_role.role = uhr.sys_id;
-            add_role.insert();
-        }
+        // var uhr = new GlideRecord(HackathonExternalRegConstants.ROLE);
+        // uhr.addQuery('name', HackathonExternalRegConstants.COMMUNITY_USER);
+        // uhr.query();
+        // if (uhr.next()) {
+        //     var add_role = new GlideRecord(HackathonExternalRegConstants.SYS_USER_HAS_ROLE);
+        //     add_role.user = user_id;
+        //     add_role.role = uhr.sys_id;
+        //     add_role.insert();
+        // }
         var external_role = new GlideRecord(HackathonExternalRegConstants.ROLE);
         external_role.addQuery('name', HackathonExternalRegConstants.EXTERNAL_USER);
         external_role.query();
@@ -582,13 +592,13 @@ HackathonExternalUserManagmentUtils.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-09-15 09:06:13</sys_created_on>
         <sys_id>d4107978c3c8b210a4e87205e401315f</sys_id>
-        <sys_mod_count>9</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>HackathonExternalUserManagmentUtils</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sys_script_include_d4107978c3c8b210a4e87205e401315f</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-09-15 12:49:50</sys_updated_on>
+        <sys_updated_on>2025-09-17 03:32:10</sys_updated_on>
     </sys_script_include>
 </record_update>
