@@ -1,0 +1,397 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[api.controller = function($scope) {
+  var c = this;
+
+  // ----- Stepper -----
+  c.steps = [
+    { key: 'new',      label: 'New' },
+    { key: 'details',  label: 'Hackathon Details' },
+    { key: 'duration', label: 'Duration' },
+    { key: 'rules',    label: 'Rules' }
+  ];
+  c.stepIndex = 0;
+
+  // ----- Data Model -----
+  c.model = { user: null };
+  c.form = {
+    email: '',
+    hackathon_name: '',
+    hackathon_details: '',
+    start_dt: '',
+    end_dt:   '',
+    rules: ''
+  };
+
+  // sn-record-picker bound field
+  c.userField = { name: 'user', value: '', displayValue: '' };
+
+  // ----- UI/flow state -----
+  c.state = {
+    submitting: false,  // true while request in-flight (prevents double-click)
+    locked:     false,  // true after successful create (hides controls)
+    error: '',
+    success: '',
+    incident: null
+  };
+  c.dateError = false;
+
+  // ----- Helpers -----
+  c._fetchEmail = function(sysId) {
+    if (!sysId) { c.form.email = ''; return; }
+    c.state.submitting = true;
+    c.server.get({ action: 'get_user_email', sys_id: sysId })
+      .then(function(resp) {
+        c.form.email = (resp.data && resp.data.email) || '';
+      })
+      .catch(function() {
+        c.state.error = 'Failed to fetch email for selected user';
+      })
+      .finally(function() { c.state.submitting = false; });
+  };
+
+  // Listen to sn-record-picker change
+  $scope.$on('field.change', function(evt, parms) {
+    if (parms && parms.field && parms.field.name === 'user') {
+      c.model.user = {
+        value: parms.newValue,
+        displayValue: parms.displayValue || parms.field.displayValue
+      };
+      c._fetchEmail(c.model.user.value);
+      $scope.$applyAsync();
+    }
+  });
+
+  c.prev = function() {
+    if (c.state.locked || c.state.submitting) return;
+    c.state.error = '';
+    if (c.stepIndex > 0) c.stepIndex--;
+  };
+
+  // ----- Validation -----
+  c._validateCurrent = function() {
+    if (c.stepIndex === 0) {
+      if (!c.model.user || !c.model.user.value) return 'Name is required';
+      if (!c.form.email) return 'Email is required (auto-fill failed)';
+    }
+    if (c.stepIndex === 1) {
+      if (!c.form.hackathon_name) return 'Hackathon name is required';
+    }
+    if (c.stepIndex === 2) {
+      if (!c.form.start_dt || !c.form.end_dt) return 'Start and End date/time are required';
+      try {
+        var s = new Date(c.form.start_dt);
+        var e = new Date(c.form.end_dt);
+        c.dateError = e < s;
+        if (c.dateError) return 'End must be after Start';
+      } catch (e) {}
+    }
+    return '';
+  };
+
+  c.canNext   = function() { return !c._validateCurrent(); };
+  c.canSubmit = function() { return !c._validateCurrent(); };
+
+  c.next = function() {
+    if (c.state.locked || c.state.submitting) return;
+    var err = c._validateCurrent();
+    c.state.error = err || '';
+    if (!err && c.stepIndex < c.steps.length - 1) c.stepIndex++;
+  };
+
+  // Generate a per-submit idempotency key (client-side)
+  function makeKey() {
+    return Date.now() + '-' + Math.random().toString(36).slice(2);
+  }
+
+  // ----- Submit → create Incident on server (idempotent) -----
+  c.submit = function() {
+    if (c.state.locked || c.state.submitting) return;    // guard against double-clicks
+    var err = c._validateCurrent();
+    c.state.error = err || '';
+    if (err) return;
+
+    c.state.submitting = true;
+    c.state.success = '';
+    c.state.incident = null;
+
+    var idemKey = makeKey();
+
+    c.server.get({
+      action: 'create_incident',
+      payload: {
+        idem_key:         idemKey,                         // idempotency token
+        user_sys_id:      c.model.user && c.model.user.value,
+        user_display:     c.model.user && c.model.user.displayValue,
+        email:            c.form.email,
+        hackathon_name:   c.form.hackathon_name,
+        hackathon_details:c.form.hackathon_details,
+        start_dt:         c.form.start_dt,
+        end_dt:           c.form.end_dt,
+        rules:            c.form.rules
+      }
+    }).then(function(resp) {
+      if (resp.data && resp.data.error) {
+        c.state.error = resp.data.error;
+        return;
+      }
+      c.state.incident = resp.data && resp.data.incident ? resp.data.incident : null;
+      if (c.state.incident) {
+        c.state.success = 'Incident ' + c.state.incident.number + ' created';
+        c.state.locked = true;                    // hide controls after success
+      }
+    }).catch(function() {
+      c.state.error = 'Failed to create Incident';
+    }).finally(function() {
+      c.state.submitting = false;
+    });
+  };
+
+  // Optional: start a fresh submission
+  c.reset = function() {
+    c.stepIndex = 0;
+    c.model.user = null;
+    c.userField = { name: 'user', value: '', displayValue: '' };
+    c.form = { email:'', hackathon_name:'', hackathon_details:'', start_dt:'', end_dt:'', rules:'' };
+    c.state = { submitting:false, locked:false, error:'', success:'', incident:null };
+    c.dateError = false;
+  };
+};
+]]></client_script>
+        <controller_as>c</controller_as>
+        <css>.hw-card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }&#13;
+.hw-title { margin-top: 0; margin-bottom: 16px; }&#13;
+&#13;
+.hw-steps { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }&#13;
+.hw-step { padding: 8px 12px; border-radius: 16px; background: #e9ecef; font-weight: 600; }&#13;
+.hw-step.active { background: #13854e; color: #fff; }&#13;
+.hw-step.done { background: #58a67a; color: #fff; }&#13;
+&#13;
+.hw-panel { margin-top: 8px; }&#13;
+.m-t-16 { margin-top: 16px; }&#13;
+.m-t-8 { margin-top: 8px; }&#13;
+&#13;
+.hw-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id>hackathon-creation</id>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Hackathon Creation</name>
+        <option_schema/>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[(function() {
+  data.error = '';
+  if (!input) return;
+
+  function toDisplay(v) {
+    if (!v) return '';
+    var s = ('' + v).replace('T', ' ');
+    if (s.length === 16) s += ':00';
+    return s;
+  }
+
+  function findByCorrelation(idemKey) {
+    if (!idemKey) return null;
+    var gr = new GlideRecord('incident');
+    gr.addQuery('correlation_id', idemKey);
+    gr.setLimit(1);
+    gr.query();
+    return gr.next() ? gr : null;
+  }
+
+  try {
+    if (input.action === 'get_user_email') {
+      var u = new GlideRecord('sys_user');
+      if (u.get(String(input.sys_id))) {
+        data.email = String(u.getValue('email')) || '';
+      } else {
+        data.email = '';
+      }
+      return;
+    }
+
+    if (input.action === 'create_incident') {
+      var p = input.payload || {};
+
+      // Server-side validation
+      if (!p.user_sys_id) throw 'User (Name) is required';
+      if (!p.email) throw 'Email is required';
+      if (!p.hackathon_name) throw 'Hackathon name is required';
+      if (!p.start_dt || !p.end_dt) throw 'Start and End date/time are required';
+
+      var startGdt = new GlideDateTime(); startGdt.setDisplayValue(toDisplay(p.start_dt));
+      var endGdt   = new GlideDateTime(); endGdt.setDisplayValue(toDisplay(p.end_dt));
+      if (endGdt.getNumericValue() < startGdt.getNumericValue())
+        throw 'End date/time must be after Start date/time';
+
+      // ---- Idempotency: return existing if same idem_key already used ----
+      var existing = findByCorrelation(p.idem_key);
+      if (existing) {
+        data.incident = { sys_id: ''+existing.getUniqueValue(), number: ''+existing.getValue('number') };
+        return;
+      }
+
+      // Build description
+      var desc = '';
+      desc += 'Hackathon Submission\n';
+      desc += '--------------------\n';
+      desc += 'Name: ' + (p.user_display || '(selected user)') + '\n';
+      desc += 'Email: ' + p.email + '\n\n';
+      desc += 'Hackathon: ' + p.hackathon_name + '\n';
+      if (p.hackathon_details) desc += 'Details:\n' + p.hackathon_details + '\n\n';
+      desc += 'Duration:\n';
+      desc += '  Start: ' + startGdt.getDisplayValue() + '\n';
+      desc += '  End:   ' + endGdt.getDisplayValue() + '\n\n';
+      if (p.rules) desc += 'Rules:\n' + p.rules + '\n';
+
+      // Create Incident (write idem key into correlation_id)
+      var inc = new GlideRecord('incident');
+      inc.initialize();
+      inc.setValue('short_description', 'Hackathon: ' + p.hackathon_name);
+      inc.setValue('caller_id', p.user_sys_id);
+      inc.setValue('contact_type', 'self-service');
+      inc.setValue('description', desc);
+      if (p.idem_key) inc.setValue('correlation_id', p.idem_key);
+
+      var incSysId = inc.insert();
+
+      data.incident = { sys_id: incSysId, number: '' + inc.getValue('number') };
+      return;
+    }
+
+    data.error = 'Unsupported action';
+  } catch (e) {
+    // If a unique index on correlation_id blocks a duplicate insert,
+    // we can safely fetch & return the existing record.
+    var msg = String(e);
+    if ((input && input.action === 'create_incident') && input.payload && input.payload.idem_key) {
+      var fallback = findByCorrelation(input.payload.idem_key);
+      if (fallback) {
+        data.incident = { sys_id: ''+fallback.getUniqueValue(), number: ''+fallback.getValue('number') };
+        return;
+      }
+    }
+    data.error = msg;
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-10-01 06:47:20</sys_created_on>
+        <sys_id>ca49a371c3543210a4e87205e401317b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Hackathon Creation</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_ca49a371c3543210a4e87205e401317b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-10-01 06:47:20</sys_updated_on>
+        <template><![CDATA[<div class="hw-card">
+
+  <h3 class="hw-title">Hackathon Wizard</h3>
+
+  <!-- Stepper -->
+  <div class="hw-steps">
+    <div ng-repeat="s in c.steps track by $index"
+         class="hw-step"
+         ng-class="{'active': $index === c.stepIndex, 'done': $index < c.stepIndex}">
+      <span>{{$index + 1}}. {{s.label}}</span>
+    </div>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-danger" ng-if="c.state.error">{{c.state.error}}</div>
+  <div class="alert alert-success" ng-if="c.state.success">{{c.state.success}}</div>
+
+  <!-- Step: New -->
+  <div ng-if="c.stepIndex === 0" class="hw-panel">
+    <label class="control-label">Name <span class="text-danger">*</span></label>
+    <sn-record-picker
+      field="c.userField"
+      table="'sys_user'"
+      display-field="'name'"
+      value-field="'sys_id'"
+      search-fields="'name,email'"
+      page-size="50"
+      default-query="'active=true'">
+    </sn-record-picker>
+
+    <label class="control-label m-t-16">Email <span class="text-danger">*</span></label>
+    <input class="form-control" type="email" ng-model="c.form.email" placeholder="auto-filled from user" readonly />
+  </div>
+
+  <!-- Step: Hackathon Details -->
+  <div ng-if="c.stepIndex === 1" class="hw-panel">
+    <label class="control-label">Hackathon name <span class="text-danger">*</span></label>
+    <input class="form-control" type="text" ng-model="c.form.hackathon_name" maxlength="200" />
+    <label class="control-label m-t-16">Hackathon details</label>
+    <textarea class="form-control" rows="5" ng-model="c.form.hackathon_details"></textarea>
+  </div>
+
+  <!-- Step: Duration -->
+  <div ng-if="c.stepIndex === 2" class="hw-panel">
+    <label class="control-label">Start date/time <span class="text-danger">*</span></label>
+    <input class="form-control" type="datetime-local" ng-model="c.form.start_dt" />
+    <label class="control-label m-t-16">End date/time <span class="text-danger">*</span></label>
+    <input class="form-control" type="datetime-local" ng-model="c.form.end_dt" />
+    <div class="text-danger m-t-8" ng-if="c.dateError">End date must be after Start date</div>
+  </div>
+
+  <!-- Step: Rules -->
+  <div ng-if="c.stepIndex === 3" class="hw-panel">
+    <label class="control-label">Rules</label>
+    <textarea class="form-control" rows="6" ng-model="c.form.rules"></textarea>
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="hw-footer">
+    <!-- Hide all controls once locked OR incident exists -->
+    <button class="btn btn-default"
+            ng-if="!c.state.locked && !c.state.incident"
+            ng-disabled="c.stepIndex===0 || c.state.submitting"
+            ng-click="c.prev()">
+      Back
+    </button>
+
+    <button class="btn btn-primary"
+            ng-if="c.stepIndex < c.steps.length-1 && !c.state.locked && !c.state.incident"
+            ng-disabled="!c.canNext() || c.state.submitting"
+            ng-click="c.next()">
+      Next
+    </button>
+
+    <button class="btn btn-success"
+            ng-if="c.stepIndex === c.steps.length-1 && !c.state.locked && !c.state.incident"
+            ng-disabled="!c.canSubmit() || c.state.submitting"
+            ng-click="c.submit()">
+      {{ c.state.submitting ? 'Submitting…' : 'Submit' }}
+    </button>
+  </div>
+
+  <!-- Success banner -->
+  <div class="alert alert-info m-t-16" ng-if="c.state.incident">
+    Incident {{c.state.incident.number}} created.
+  </div>
+
+  <!-- Optional: Start another submission -->
+  <!--
+  <div class="m-t-16" ng-if="c.state.incident">
+    <button class="btn btn-default" ng-click="c.reset()">Start another submission</button>
+  </div>
+  -->
+
+</div>
+]]></template>
+    </sp_widget>
+</record_update>

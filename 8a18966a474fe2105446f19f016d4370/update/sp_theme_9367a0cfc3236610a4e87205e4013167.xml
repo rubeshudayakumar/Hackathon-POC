@@ -72,9 +72,9 @@ $state-info-bg: #f9dede;&#13;
 $state-info-border: $brand-info;&#13;
 $state-info-text: #660000;&#13;
 &#13;
-$state-success-bg: #f5cfcf;&#13;
+$state-success-bg: #67eb88;&#13;
 $state-success-border: $brand-success;&#13;
-$state-success-text: #660000;&#13;
+$state-success-text: #163604;&#13;
 &#13;
 $state-warning-bg: #f9e0e0;&#13;
 $state-warning-border: $brand-warning;&#13;
@@ -185,14 +185,14 @@ $accessible-placeholder-gray: #565656;&#13;
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-08-28 07:04:27</sys_created_on>
         <sys_id>9367a0cfc3236610a4e87205e4013167</sys_id>
-        <sys_mod_count>4</sys_mod_count>
+        <sys_mod_count>5</sys_mod_count>
         <sys_name>Hackathon Theme</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_theme_9367a0cfc3236610a4e87205e4013167</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-08-28 07:28:31</sys_updated_on>
+        <sys_updated_on>2025-09-17 10:24:33</sys_updated_on>
         <turn_off_scss_compilation>false</turn_off_scss_compilation>
     </sp_theme>
 </record_update>

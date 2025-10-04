@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_widget">
+    <sp_widget action="INSERT_OR_UPDATE">
+        <category>custom</category>
+        <client_script><![CDATA[// Client Script
+function($scope, spUtil) {
+  var c = this;
+  
+  // Initialize phases - Define your phase structure here
+  c.phases = $scope.data.phases || [
+    {
+      name: "Basic Information",
+      fields: ["sys_created_by"]
+    }
+  ];
+
+  console.log(c.phases);
+  
+  // Current phase tracking
+  c.currentPhase = 0;
+  
+  // Store form values
+  c.formValues = {};
+  
+  // Validation errors
+  c.validationErrors = [];
+  
+  // Initialize form values from data.f._fields
+  function initializeFormValues() {
+    if (!$scope.data.f || !$scope.data.f._fields) return;
+    
+    angular.forEach($scope.data.f._fields, function(field, fieldName) {
+      c.formValues[fieldName] = field.value || field.displayValue || '';
+      
+      // For reference fields, also store display value
+      if (field.type === 'reference') {
+        c.formValues[fieldName + '_display'] = field.displayValue || '';
+      }
+    });
+  }
+
+  // Client Script (Controller or Widget Client Controller)
+  angular.module('sn.$sp').directive('fileModel', ['$parse', function ($parse) {
+    return {
+      restrict: 'A',
+      link: function(scope, element, attrs) {
+        var model = $parse(attrs.fileModel);
+        var modelSetter = model.assign;
+
+        element.bind('change', function() {
+          var file = element[0].files[0];
+          if (!file) return;
+
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            scope.$apply(function() {
+              // Keep the full data URL string
+              var dataUrl = e.target.result;
+              modelSetter(scope, dataUrl);
+
+              // Cache preview for UI
+              scope.$parent.c.previewCache = scope.$parent.c.previewCache || {};
+              scope.$parent.c.previewCache[file.name] = dataUrl;
+            });
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+    };
+  }]);
+
+
+
+  c.previewCache = {};
+
+  c.isLastPhase = function () {
+    return c.currentPhase === c.phases.length - 1;
+  };
+
+
+  c.getImagePreview = function(value, fieldName) {
+    if (!value) return '';
+    console.log(value);
+    return value; // already a valid Data URL
+  };
+
+
+
+  c.triggerFileInput = function(fieldName) {
+    document.getElementById('file_' + fieldName).click();
+  };
+
+  // Validate current phase fields
+  c.validateCurrentPhase = function() {
+    c.validationErrors = [];
+    var currentFields = c.phases[c.currentPhase].fields;
+    var isValid = true;
+    
+    angular.forEach(currentFields, function(fieldName) {
+      var field = $scope.data.f._fields[fieldName];
+      if (!field) return;
+      
+      // Check mandatory fields
+      if (field.mandatory || field.sys_mandatory) {
+        var value = c.formValues[fieldName];
+        if (!value || value === '' || value === null) {
+          c.validationErrors.push({
+            field: fieldName,
+            label: field.label,
+            message: 'This field is required'
+          });
+          isValid = false;
+        }
+      }
+      
+      // Check max length for string fields
+      if (field.type === 'string' && field.max_length) {
+        var value = c.formValues[fieldName];
+        if (value && value.length > field.max_length) {
+          c.validationErrors.push({
+            field: fieldName,
+            label: field.label,
+            message: 'Maximum length is ' + field.max_length + ' characters'
+          });
+          isValid = false;
+        }
+      }
+    });
+    
+    return isValid;
+  };
+  
+  // Navigate to next phase
+  c.nextPhase = function() {
+    if (!c.validateCurrentPhase()) {
+      spUtil.addErrorMessage('Please fill in all required fields');
+      return;
+    }
+    
+    if (c.currentPhase < c.phases.length - 1) {
+      c.currentPhase++;
+      c.validationErrors = [];
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+  };
+  
+  // Navigate to previous phase
+  c.previousPhase = function() {
+    if (c.currentPhase > 0) {
+      c.currentPhase--;
+      c.validationErrors = [];
+      
+      // Scroll to top
+      window.scrollTo(0, 0);
+    }
+  };
+  
+  // Submit the form
+  c.submitForm = function() {
+		
+		c.data.action = 'submit_form';
+		
+    if (!c.validateCurrentPhase()) {
+      spUtil.addErrorMessage('Please fill in all required fields');
+      return;
+    }
+    
+    // Prepare data for submission
+    var submitData = {
+      table: $scope.data.f.table,
+      sys_id: $scope.data.f.sys_id || '-1',
+      fields: c.formValues
+    };
+    
+    // Call server to submit
+    c.data.submitting = true;
+		c.data.submitData = submitData;
+		console.log(submitData);
+    
+    c.server.update({
+      action: 'submit_form',
+      data: submitData
+    }).then(function(response) {
+      c.data.submitting = false;
+      
+      if (response.data.success) {
+        spUtil.addInfoMessage('Form submitted successfully!');
+        
+        // Optionally redirect or reset form
+        if (response.data.sys_id) {
+          $scope.data.f.sys_id = response.data.sys_id;
+        }
+        
+        // Reset to first phase
+        c.currentPhase = 0;
+      } else {
+        spUtil.addErrorMessage(response.data.error || 'Error submitting form');
+      }
+    }).catch(function(error) {
+      c.data.submitting = false;
+      spUtil.addErrorMessage('Error submitting form');
+    });
+  };
+  
+  // Initialize on load
+  initializeFormValues();
+  
+  // Watch for changes in data.f
+  // $scope.$watch('data.f._fields', function(newVal, oldVal) {
+  //   if (newVal && newVal !== oldVal) {
+  //     initializeFormValues();
+  //   }
+  // }, true);
+
+  // reader.onload = function(e) {
+  //   $scope.$apply(function() {
+  //     var base64String = e.target.result.split(',')[1];
+
+  //     // Store Base64 in formValues
+  //     modelSetter($scope, base64String);
+
+  //     // Also keep File in previewCache
+  //     $scope.$parent.c.previewCache[file.name] = URL.createObjectURL(file);
+  //   });
+  // };
+
+
+  $scope.$watchCollection('data.f._fields', function(newVal, oldVal) {
+    if (newVal && newVal !== oldVal) {
+      initializeFormValues();
+    }
+  });
+  
+}]]></client_script>
+        <controller_as>c</controller_as>
+        <css>/* Phase Widget Styles */
+.phase-widget-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Horizontal Phase Progress Bar */
+.phase-horizontal-progress {
+  display: flex;
+  background: transparent;
+  margin-bottom: 32px;
+  overflow: visible;
+}
+
+.phase-item {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 24px;
+  background: #e8e8e8;
+  color: #666;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 20px 50%);
+  margin-left: -20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.phase-item:first-child {
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+  margin-left: 0;
+  border-radius: 6px 0 0 6px;
+}
+
+.phase-item:last-child {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 20px 50%);
+  border-radius: 0 6px 6px 0;
+}
+
+.phase-item.active {
+  background: #0d8754;
+  color: #ffffff;
+  z-index: 2;
+  box-shadow: 0 4px 12px rgba(13, 135, 84, 0.3);
+  transform: scale(1.05);
+}
+
+.phase-item.completed {
+  background: #0d8754;
+  color: #ffffff;
+  z-index: 1;
+}
+
+.phase-item.pending {
+  background: #e8e8e8;
+  color: #666;
+}
+
+.phase-item:hover:not(.active) {
+  background: #d4d4d4;
+  transform: translateY(-2px);
+}
+
+.phase-check {
+  margin-right: 6px;
+  font-weight: bold;
+}
+
+/* Main Form Card */
+.phase-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+}
+
+.phase-title {
+  margin: 0 0 24px 0;
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.phase-content {
+  min-height: 300px;
+  margin-bottom: 32px;
+}
+
+.phase-subtitle {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #0d8754;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+/* Form Fields */
+.form-group {
+  margin-bottom: 24px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  margin-right: 8px;
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.mandatory-indicator {
+  color: #d9534f;
+  margin-left: 4px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #0d8754;
+  box-shadow: 0 0 0 3px rgba(13, 135, 84, 0.1);
+}
+
+.form-control:read-only,
+.form-control:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.textarea-field {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.field-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+  font-style: italic;
+}
+
+/* Validation Alert */
+.validation-alert {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: #fff3cd;
+  border-left: 4px solid #ffc107;
+  border-radius: 6px;
+  color: #856404;
+}
+
+.validation-alert div {
+  margin-top: 8px;
+}
+
+.validation-alert div:first-of-type {
+  margin-top: 8px;
+}
+
+/* Phase Footer */
+.phase-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 24px;
+  border-top: 2px solid #e9ecef;
+  gap: 16px;
+}
+
+.phase-progress-text {
+  color: #666;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.btn {
+  padding: 12px 28px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-default {
+  background: #e9ecef;
+  color: #333;
+}
+
+.btn-default:hover:not(:disabled) {
+  background: #dee2e6;
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: #0d8754;
+  color: #ffffff;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #0a6d43;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 135, 84, 0.3);
+}
+
+.btn-success {
+  background: #0d8754;
+  color: #ffffff;
+}
+
+.btn-success:hover:not(:disabled) {
+  background: #0a6d43;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 135, 84, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .phase-item {
+    font-size: 12px;
+    padding: 14px 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .phase-widget-container {
+    padding: 12px;
+  }
+  
+  .phase-horizontal-progress {
+    flex-direction: column;
+  }
+
+  .phase-item {
+    clip-path: none;
+    margin-left: 0;
+    margin-bottom: -1px;
+    border-radius: 0 !important;
+    border-left: 4px solid transparent;
+  }
+
+  .phase-item:first-child {
+    border-radius: 6px 6px 0 0 !important;
+  }
+
+  .phase-item:last-child {
+    border-radius: 0 0 6px 6px !important;
+  }
+
+  .phase-item.active,
+  .phase-item.completed {
+    border-left-color: #0d8754;
+  }
+
+  .phase-item.active {
+    transform: scale(1);
+  }
+
+  .phase-card {
+    padding: 20px;
+  }
+
+  .phase-title {
+    font-size: 22px;
+  }
+
+  .phase-footer {
+    flex-wrap: wrap;
+  }
+
+  .phase-progress-text {
+    width: 100%;
+    text-align: center;
+    order: -1;
+    margin-bottom: 12px;
+  }
+}</css>
+        <data_table>sp_instance</data_table>
+        <demo_data/>
+        <description/>
+        <docs/>
+        <field_list/>
+        <has_preview>false</has_preview>
+        <id/>
+        <internal>false</internal>
+        <link><![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]></link>
+        <name>Widget Form - HCK</name>
+        <option_schema>[{"name":"phases","section":"data","default_value":"","label":"Phases Configuration","type":"string"},{"name":"images","section":"data","default_value":"","label":"Images Fields","type":"string"}]</option_schema>
+        <public>false</public>
+        <roles/>
+        <script><![CDATA[// Server Script
+(function () {
+  // Get form data on initial load
+  if (!input) {
+    // Default table and sys_id from options or use incident as example
+    var table = options.table || "x_1097288_hacktaho_hackathon_registration";
+    var sysId = options.sys_id || "-1";
+    var view = options.view || "sp";
+
+    // Get form structure using $sp.getForm
+    data.f = $sp.getForm(table, sysId, view);
+    if (options.phases) {
+      phases = JSON.parse(options.phases);
+    } else {
+      // Default phases if not provided
+      phases = [
+        {
+          name: "Basic Information",
+          fields: ["description"],
+        },
+      ];
+    }
+
+    // Add any additional data needed
+    data.table = table;
+    data.sys_id = sysId;
+    data.view = view;
+    data.phases = phases;
+
+    return;
+  }
+
+  // Handle form submission
+  if (input.action == "submit_form") {
+    try {
+      gs.info(JSON.stringify(input.submitData));
+      var submitData = input.submitData;
+      var table = submitData.table;
+      var sysId = submitData.sys_id;
+      var fields = submitData.fields;
+
+      // Create or update record
+      var gr = new GlideRecord(table);
+
+      if (sysId && sysId !== "-1") {
+        // Update existing record
+        if (gr.get(sysId)) {
+          // Set field values
+          for (var fieldName in fields) {
+            if (
+              gr.isValidField(fieldName) &&
+              fields.hasOwnProperty(fieldName)
+            ) {
+              gr.setValue(fieldName, fields[fieldName]);
+            }
+          }
+
+          // Update the record
+          gr.update();
+
+          data.success = true;
+          data.sys_id = sysId;
+          data.message = "Record updated successfully";
+        } else {
+          data.success = false;
+          data.error = "Record not found";
+        }
+      } else {
+        // Create new record
+        gr.initialize();
+
+        // Set field values
+        for (var fieldName in fields) {
+          if (gr.isValidField(fieldName) && fields.hasOwnProperty(fieldName)) {
+            if (
+              !options.images.split(",").includes(fieldName) &&
+              fields[fieldName]
+            ) {
+              gr.setValue(fieldName, fields[fieldName]);
+            }
+          }
+        }
+
+        // Insert the record
+        var newSysId = gr.insert();
+
+        // Handle image fields separately
+        var imageFields = options.images ? options.images.split(",") : [];
+        imageFields.forEach(function (fieldName) {
+          if (fields[fieldName]) {
+            var rec = new GlideRecord(table);
+            if (rec.get(newSysId)) {
+              var matches = fields[fieldName].match(/^data:(.+);base64,(.*)$/);
+              if (matches) {
+                var contentType = matches[1]; // e.g. "image/png"
+                var base64Data = matches[2]; // raw base64 string only
+
+                var sa = new GlideSysAttachment();
+                var attachmentSysId = sa.writeBase64(
+                  rec,
+                  fieldName + ".png",
+                  contentType,
+                  base64Data
+                );
+
+                // Link the image field to the attachment sys_id
+                rec.setValue(fieldName, attachmentSysId);
+                rec.update();
+              } else {
+                gs.warn("Invalid data URI for field " + fieldName);
+              }
+            }
+          }
+        });
+
+        if (newSysId) {
+          data.success = true;
+          data.sys_id = newSysId;
+          data.number = gr.getValue("number") || "";
+          data.message = "Record created successfully";
+        } else {
+          data.success = false;
+          data.error = "Failed to create record";
+        }
+      }
+    } catch (e) {
+      gs.info(e);
+      data.success = false;
+      data.error = e.message || "Error processing form submission";
+      gs.error("Phase Widget Error: " + e.message);
+    }
+  }
+})();
+]]></script>
+        <servicenow>false</servicenow>
+        <sys_class_name>sp_widget</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2025-10-01 07:02:44</sys_created_on>
+        <sys_id>4a7ce3b1c3543210a4e87205e40131e5</sys_id>
+        <sys_mod_count>208</sys_mod_count>
+        <sys_name>Widget Form - HCK</sys_name>
+        <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
+        <sys_update_name>sp_widget_4a7ce3b1c3543210a4e87205e40131e5</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2025-10-04 03:24:22</sys_updated_on>
+        <template><![CDATA[<!-- ServiceNow Widget HTML Template -->
+<div class="phase-widget-container">
+  
+  <!-- Horizontal Phase Progress Bar -->
+  <div class="phase-horizontal-progress">
+    <div ng-repeat="phase in c.phases track by $index" 
+         class="phase-item"
+         ng-class="{
+           'completed': c.currentPhase > $index,
+           'active': c.currentPhase === $index,
+           'pending': c.currentPhase < $index
+         }"
+         ng-click="c.goToPhase($index)">
+      <span class="phase-check" ng-if="c.currentPhase > $index">✓</span>
+      {{phase.name}}
+    </div>
+  </div>
+
+  <!-- Main Form Card -->
+  <div class="phase-card">
+    <h2 class="phase-title">{{data.f.title || 'Multi-Phase Form'}}</h2>
+    
+    <!-- Current Phase Content -->
+    <div class="phase-content">
+      <h3 class="phase-subtitle">{{c.phases[c.currentPhase].name}}</h3>
+      
+      <!-- Dynamic Form Fields -->
+      <div class="form-group" ng-repeat="fieldName in c.phases[c.currentPhase].fields">
+        <div ng-if="data.f._fields[fieldName]">
+          
+          <!-- String/Text Input -->
+          <div ng-if="data.f._fields[fieldName].type === 'string'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <input type="text" 
+                   class="form-control"
+                   ng-model="c.formValues[fieldName]"
+                   ng-readonly="data.f._fields[fieldName].readonly"
+                   maxlength="{{data.f._fields[fieldName].max_length}}"
+                   placeholder="{{data.f._fields[fieldName].hint}}">
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Choice/Select Dropdown -->
+          <div ng-if="data.f._fields[fieldName].type === 'choice'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <select class="form-control"
+                    ng-model="c.formValues[fieldName]"
+                    ng-disabled="data.f._fields[fieldName].readonly">
+              <option value="">-- Select --</option>
+              <option ng-repeat="choice in data.f._fields[fieldName].choices" 
+                      value="{{choice.value}}">
+                {{choice.label}}
+              </option>
+            </select>
+          </div>
+
+          <!-- Reference Field (Autocomplete) -->
+          <div ng-if="data.f._fields[fieldName].type === 'reference'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory || data.f._fields[fieldName].sys_mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <sn-record-picker 
+              field="c.formValues[fieldName]" 
+              table="data.f._fields[fieldName].refTable || data.f._fields[fieldName].reference" 
+              display-field="data.f._fields[fieldName].ed.searchField || 'name'" 
+              value-field="'sys_id'" 
+              search-fields="data.f._fields[fieldName].ed.searchField || 'name'" 
+              page-size="50" 
+              default-query="data.f._fields[fieldName].reference_qual || 'active=true'">
+            </sn-record-picker>
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Boolean/Checkbox -->
+          <div ng-if="data.f._fields[fieldName].type === 'boolean'">
+            <label class="field-label checkbox-label">
+              <input type="checkbox" 
+                     ng-model="c.formValues[fieldName]"
+                     ng-disabled="data.f._fields[fieldName].readonly">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Integer Input -->
+          <div ng-if="data.f._fields[fieldName].type === 'integer'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <input type="number" 
+                   class="form-control"
+                   ng-model="c.formValues[fieldName]"
+                   ng-readonly="data.f._fields[fieldName].readonly"
+                   placeholder="{{data.f._fields[fieldName].hint}}">
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Textarea -->
+          <div ng-if="data.f._fields[fieldName].type === 'journal' || data.f._fields[fieldName].type === 'html'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <sp-tinymce-editor 
+              ng-model="c.formValues[fieldName]" 
+              ng-model-options="{ getterSetter: true }"
+              ng-readonly="data.f._fields[fieldName].readonly"
+              placeholder="{{data.f._fields[fieldName].hint}}">
+            </sp-tinymce-editor>
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Date Picker -->
+          <div ng-if="data.f._fields[fieldName].type === 'glide_date'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <input type="date" 
+                   class="form-control"
+                   ng-model="c.formValues[fieldName]"
+                   ng-readonly="data.f._fields[fieldName].readonly"
+                   placeholder="{{data.f._fields[fieldName].hint}}">
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- DateTime Picker -->
+          <div ng-if="data.f._fields[fieldName].type === 'glide_date_time'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <input type="datetime-local" 
+                   class="form-control"
+                   ng-model="c.formValues[fieldName]"
+                   ng-readonly="data.f._fields[fieldName].readonly"
+                   placeholder="{{data.f._fields[fieldName].hint}}">
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
+
+          <!-- Image Upload -->
+          <div ng-if="data.f._fields[fieldName].type === 'user_image'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+
+            <!-- Custom button -->
+            <button type="button" 
+                    class="btn btn-secondary choose-image-btn"
+                    ng-click="c.triggerFileInput(fieldName)">
+              Choose Image
+            </button>
+            <span ng-if="c.formValues[fieldName]">{{c.formValues[fieldName].name}}</span>
+
+            <!-- Hidden file input -->
+            <input type="file"
+                  accept="image/*"
+                  file-model="c.formValues[fieldName]"
+                  id="file_{{fieldName}}"
+                  style="display:none"
+                  ng-disabled="data.f._fields[fieldName].readonly">
+
+            <!-- Preview -->
+            <div ng-if="c.formValues[fieldName]">
+              <img ng-src="{{c.getImagePreview(c.formValues[fieldName], fieldName)}}"
+                  alt="Preview"
+                  style="max-width:200px; margin-top:10px;">
+            </div>
+
+          </div>
+
+
+        </div>
+      </div>
+
+      <!-- Validation Messages -->
+      <div ng-if="c.validationErrors.length > 0" class="validation-alert">
+        <strong>⚠ Please correct the following errors:</strong>
+        <div ng-repeat="error in c.validationErrors">
+          <strong>{{error.label}}:</strong> {{error.message}}
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Footer -->
+    <div class="phase-footer">
+      <button class="btn btn-default" 
+              ng-click="c.previousPhase()"
+              ng-disabled="c.currentPhase === 0">
+        ← Previous
+      </button>
+
+      <div class="phase-progress-text">
+        Phase {{c.currentPhase + 1}} of {{c.phases.length}}
+      </div>
+
+      <!-- Single primary button -->
+      <button class="btn btn-primary"
+              ng-click="c.isLastPhase() ? c.submitForm() : c.nextPhase()"
+              ng-disabled="c.data.submitting">
+        <span ng-if="!c.isLastPhase()">Next →</span>
+        <span ng-if="c.isLastPhase()">
+          <span ng-if="!c.data.submitting">Submit</span>
+          <span ng-if="c.data.submitting">Submitting...</span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+</div>]]></template>
+    </sp_widget>
+</record_update>
