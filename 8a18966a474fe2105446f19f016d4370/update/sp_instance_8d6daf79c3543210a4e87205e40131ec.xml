@@ -38,24 +38,28 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-01 07:03:23</sys_created_on>
         <sys_id>8d6daf79c3543210a4e87205e40131ec</sys_id>
-        <sys_mod_count>19</sys_mod_count>
+        <sys_mod_count>30</sys_mod_count>
         <sys_name/>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_instance_8d6daf79c3543210a4e87205e40131ec</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-04 03:02:52</sys_updated_on>
+        <sys_updated_on>2025-10-06 05:01:45</sys_updated_on>
         <title/>
         <url/>
         <widget_parameters><![CDATA[{
 	"phases": {
-		"value": "[{\"name\":\"First Phase\",\"fields\":[\"hackathon_name\",\"test_html\"]},{\"name\":\"Second Phase\",\"fields\":[\"test_date\",\"test_date_time\"]},{\"name\":\"Third Phase\",\"fields\":[\"test_image\"]}]",
-		"displayValue": "[{\"name\":\"First Phase\",\"fields\":[\"hackathon_name\",\"test_html\"]},{\"name\":\"Second Phase\",\"fields\":[\"test_date\",\"test_date_time\"]},{\"name\":\"Third Phase\",\"fields\":[\"test_image\"]}]"
+		"value": "[{\"name\":\"First Phase\",\"fields\":[\"hackathon_name\",\"test_html\"]},{\"name\":\"Second Phase\",\"fields\":[\"test_date\",\"test_date_time\",\"test_choice\",\"test_image_two\"]},{\"name\":\"Third Phase\",\"fields\":[\"test_image\",\"test_currency\"]},{\"name\":\"Fourth Phase\",\"fields\":[\"description\",\"test_check_box\"]}]",
+		"displayValue": "[{\"name\":\"First Phase\",\"fields\":[\"hackathon_name\",\"test_html\"]},{\"name\":\"Second Phase\",\"fields\":[\"test_date\",\"test_date_time\",\"test_choice\",\"test_image_two\"]},{\"name\":\"Third Phase\",\"fields\":[\"test_image\",\"test_currency\"]},{\"name\":\"Fourth Phase\",\"fields\":[\"description\",\"test_check_box\"]}]"
 	},
 	"images": {
-		"value": "test_image",
-		"displayValue": "test_image"
+		"value": "test_image,test_image_two",
+		"displayValue": "test_image,test_image_two"
+	},
+	"currencies": {
+		"value": "test_currency",
+		"displayValue": "test_currency"
 	}
 }]]></widget_parameters>
     </sp_instance>

@@ -12,8 +12,6 @@ function($scope, spUtil) {
       fields: ["sys_created_by"]
     }
   ];
-
-  console.log(c.phases);
   
   // Current phase tracking
   c.currentPhase = 0;
@@ -35,6 +33,23 @@ function($scope, spUtil) {
       if (field.type === 'reference') {
         c.formValues[fieldName + '_display'] = field.displayValue || '';
       }
+
+      // NEW - Fixed
+      if(field.type === 'currency') {
+        if (field.value && typeof field.value === 'string' && field.value.includes(';')) {
+          var parts = field.value.split(';');
+          c.formValues[fieldName] = {
+            currency: parts[0] || $scope.data.currencies[0],
+            amount: parseFloat(parts[1]) || 0
+          };
+        } else {
+          c.formValues[fieldName] = {
+            currency: $scope.data.currencies[0],
+            amount: 0
+          };
+        }
+      }
+
     });
   }
 
@@ -79,7 +94,6 @@ function($scope, spUtil) {
 
   c.getImagePreview = function(value, fieldName) {
     if (!value) return '';
-    console.log(value);
     return value; // already a valid Data URL
   };
 
@@ -183,13 +197,12 @@ function($scope, spUtil) {
       data: submitData
     }).then(function(response) {
       c.data.submitting = false;
-      
-      if (response.data.success) {
+      if (response.success) {
         spUtil.addInfoMessage('Form submitted successfully!');
         
         // Optionally redirect or reset form
-        if (response.data.sys_id) {
-          $scope.data.f.sys_id = response.data.sys_id;
+        if (response.sys_id) {
+          $scope.data.f.sys_id = response.sys_id;
         }
         
         // Reset to first phase
@@ -263,13 +276,26 @@ function($scope, spUtil) {
   text-align: center;
   transition: all 0.3s ease;
   cursor: pointer;
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%, 20px 50%);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 20px) 0,
+    100% 50%,
+    calc(100% - 20px) 100%,
+    0 100%,
+    20px 50%
+  );
   margin-left: -20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .phase-item:first-child {
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 50%, calc(100% - 20px) 100%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    calc(100% - 20px) 0,
+    100% 50%,
+    calc(100% - 20px) 100%,
+    0 100%
+  );
   margin-left: 0;
   border-radius: 6px 0 0 6px;
 }
@@ -497,7 +523,7 @@ function($scope, spUtil) {
   .phase-widget-container {
     padding: 12px;
   }
-  
+
   .phase-horizontal-progress {
     flex-direction: column;
   }
@@ -545,7 +571,46 @@ function($scope, spUtil) {
     order: -1;
     margin-bottom: 12px;
   }
-}</css>
+}
+
+.select-dropdown {
+  padding: 0 5px;
+}
+
+/* Currency Field Styles */
+.currency-input-group {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.currency-select {
+  flex: 0 0 120px;
+  min-width: 120px;
+}
+
+.currency-amount {
+  flex: 1;
+}
+
+/* Ensure both inputs have same height */
+.currency-input-group .form-control {
+  height: 44px;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .currency-input-group {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .currency-select {
+    flex: 1;
+    width: 100%;
+  }
+}
+</css>
         <data_table>sp_instance</data_table>
         <demo_data/>
         <description/>
@@ -558,7 +623,7 @@ function($scope, spUtil) {
   
 }]]></link>
         <name>Widget Form - HCK</name>
-        <option_schema>[{"name":"phases","section":"data","default_value":"","label":"Phases Configuration","type":"string"},{"name":"images","section":"data","default_value":"","label":"Images Fields","type":"string"}]</option_schema>
+        <option_schema>[{"name":"phases","section":"data","default_value":"","label":"Phases Configuration","type":"string"},{"name":"images","section":"data","default_value":"","label":"Images Fields","type":"string"},{"name":"currencies","section":"data","default_value":"","label":"Currency Fields","type":"string"}]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[// Server Script
@@ -569,9 +634,12 @@ function($scope, spUtil) {
     var table = options.table || "x_1097288_hacktaho_hackathon_registration";
     var sysId = options.sys_id || "-1";
     var view = options.view || "sp";
+    data.table = table;
 
     // Get form structure using $sp.getForm
     data.f = $sp.getForm(table, sysId, view);
+    gs.info(JSON.stringify(data.f));
+
     if (options.phases) {
       phases = JSON.parse(options.phases);
     } else {
@@ -582,6 +650,15 @@ function($scope, spUtil) {
           fields: ["description"],
         },
       ];
+    }
+
+    var currencies = new GlideRecord("fx_currency");
+    currencies.addActiveQuery();
+    currencies.orderByDesc("code");
+    currencies.query();
+    data.currencies = [];
+    while (currencies.next()) {
+      data.currencies.push(currencies.getValue("code"));
     }
 
     // Add any additional data needed
@@ -614,12 +691,66 @@ function($scope, spUtil) {
               gr.isValidField(fieldName) &&
               fields.hasOwnProperty(fieldName)
             ) {
-              gr.setValue(fieldName, fields[fieldName]);
+              if (
+                !options.images.split(",").includes(fieldName) &&
+                !options.currencies.split(",").includes(fieldName) &&
+                fields[fieldName]
+              ) {
+                gr.setValue(fieldName, fields[fieldName]);
+              }
             }
           }
 
           // Update the record
           gr.update();
+
+          // Handle image fields separately
+          var imageFields = options.images ? options.images.split(",") : [];
+          imageFields.forEach(function (fieldName) {
+            if (fields[fieldName]) {
+              var rec = new GlideRecord(table);
+              if (rec.get(sysId)) {
+                var matches = fields[fieldName].match(
+                  /^data:(.+);base64,(.*)$/
+                );
+                if (matches) {
+                  var contentType = matches[1]; // e.g. "image/png"
+                  var base64Data = matches[2]; // raw base64 string only
+
+                  var sa = new GlideSysAttachment();
+                  var attachmentSysId = sa.writeBase64(
+                    rec,
+                    fieldName + ".png",
+                    contentType,
+                    base64Data
+                  );
+
+                  // Link the image field to the attachment sys_id
+                  rec.setValue(fieldName, attachmentSysId);
+                  rec.update();
+                } else {
+                  gs.warn("Invalid data URI for field " + fieldName);
+                }
+              }
+            }
+          });
+
+          // Handle currency fields separately
+          var currencyFields = options.currencies
+            ? options.currencies.split(",")
+            : [];
+          currencyFields.forEach(function (fieldName) {
+            if (fields[fieldName]) {
+              var rec = new GlideRecord(table);
+              if (rec.get(sysId)) {
+                rec.setValue(
+                  fieldName,
+                  fields[fieldName].currency + ";" + fields[fieldName].amount
+                );
+                rec.update();
+              }
+            }
+          });
 
           data.success = true;
           data.sys_id = sysId;
@@ -637,6 +768,7 @@ function($scope, spUtil) {
           if (gr.isValidField(fieldName) && fields.hasOwnProperty(fieldName)) {
             if (
               !options.images.split(",").includes(fieldName) &&
+              !options.currencies.split(",").includes(fieldName) &&
               fields[fieldName]
             ) {
               gr.setValue(fieldName, fields[fieldName]);
@@ -676,6 +808,23 @@ function($scope, spUtil) {
           }
         });
 
+        // Handle currency fields separately
+        var currencyFields = options.currencies
+          ? options.currencies.split(",")
+          : [];
+        currencyFields.forEach(function (fieldName) {
+          if (fields[fieldName]) {
+            var rec = new GlideRecord(table);
+            if (rec.get(newSysId)) {
+              rec.setValue(
+                fieldName,
+                fields[fieldName].currency + ";" + fields[fieldName].amount
+              );
+              rec.update();
+            }
+          }
+        });
+
         if (newSysId) {
           data.success = true;
           data.sys_id = newSysId;
@@ -700,14 +849,14 @@ function($scope, spUtil) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-01 07:02:44</sys_created_on>
         <sys_id>4a7ce3b1c3543210a4e87205e40131e5</sys_id>
-        <sys_mod_count>208</sys_mod_count>
+        <sys_mod_count>302</sys_mod_count>
         <sys_name>Widget Form - HCK</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_widget_4a7ce3b1c3543210a4e87205e40131e5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-04 03:24:22</sys_updated_on>
+        <sys_updated_on>2025-10-06 06:25:49</sys_updated_on>
         <template><![CDATA[<!-- ServiceNow Widget HTML Template -->
 <div class="phase-widget-container">
   
@@ -738,8 +887,8 @@ function($scope, spUtil) {
       <div class="form-group" ng-repeat="fieldName in c.phases[c.currentPhase].fields">
         <div ng-if="data.f._fields[fieldName]">
           
-          <!-- String/Text Input -->
-          <div ng-if="data.f._fields[fieldName].type === 'string'">
+           <!-- String/Text Input - Single Line (max_length <= 160) -->
+          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length <= 160">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
               <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
@@ -755,16 +904,35 @@ function($scope, spUtil) {
             </small>
           </div>
 
+          <!-- String/Text Input - Multi Line (max_length > 160) -->
+          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length > 160">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <textarea class="form-control"
+                      rows="5"
+                      ng-model="c.formValues[fieldName]"
+                      ng-readonly="data.f._fields[fieldName].readonly"
+                      maxlength="{{data.f._fields[fieldName].max_length}}"
+                      placeholder="{{data.f._fields[fieldName].hint}}"></textarea>
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+            <small class="field-hint">
+              {{c.formValues[fieldName] ? c.formValues[fieldName].length : 0}} / {{data.f._fields[fieldName].max_length}} characters
+            </small>
+          </div>
+
           <!-- Choice/Select Dropdown -->
           <div ng-if="data.f._fields[fieldName].type === 'choice'">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
               <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
             </label>
-            <select class="form-control"
+            <select class="form-control select-dropdown"
                     ng-model="c.formValues[fieldName]"
                     ng-disabled="data.f._fields[fieldName].readonly">
-              <option value="">-- Select --</option>
               <option ng-repeat="choice in data.f._fields[fieldName].choices" 
                       value="{{choice.value}}">
                 {{choice.label}}
@@ -832,7 +1000,11 @@ function($scope, spUtil) {
               ng-model="c.formValues[fieldName]" 
               ng-model-options="{ getterSetter: true }"
               ng-readonly="data.f._fields[fieldName].readonly"
-              placeholder="{{data.f._fields[fieldName].hint}}">
+              placeholder="{{data.f._fields[fieldName].hint}}"
+              attachment-guid="-1" 
+              record-table-name="'{{data.table}}'" 
+              >
+              
             </sp-tinymce-editor>
             <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
               {{data.f._fields[fieldName].hint}}
@@ -903,6 +1075,22 @@ function($scope, spUtil) {
 
           </div>
 
+          <!-- Currency Field -->
+          <div ng-if="data.f._fields[fieldName].type === 'currency'">
+            <label class="field-label">
+              {{data.f._fields[fieldName].label}}
+              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+            </label>
+            <div class="currency-input-group">
+              <select ng-model="c.formValues[fieldName].currency" class="form-control currency-select select-dropdown">
+                <option ng-repeat="code in data.currencies" ng-value="code">{{code}}</option>
+              </select>
+              <input class="form-control currency-amount" type="number" step="0.01" ng-model="c.formValues[fieldName].amount" placeholder="0.00">
+            </div>
+            <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
+              {{data.f._fields[fieldName].hint}}
+            </small>
+          </div>
 
         </div>
       </div>
