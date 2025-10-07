@@ -12,7 +12,9 @@ function($scope, spUtil) {
       fields: ["sys_created_by"]
     }
   ];
-  
+
+  c.fieldDependencies = $scope.data.fieldDependencies || {};
+
   // Current phase tracking
   c.currentPhase = 0;
   
@@ -21,6 +23,9 @@ function($scope, spUtil) {
   
   // Validation errors
   c.validationErrors = [];
+
+  // iniial mandatory fields
+  c.initialMandatoryFields = $scope.data.initialMandatoryFields || [];
   
   // Initialize form values from data.f._fields
   function initializeFormValues() {
@@ -52,6 +57,29 @@ function($scope, spUtil) {
 
     });
   }
+
+  // Function to check if a field should be visible
+  c.shouldShowField = function(fieldName) {
+    var dependency = c.fieldDependencies[fieldName];
+
+    // No dependency defined → always show
+    if (!dependency) return true;
+
+    var controlField = dependency.controlField;
+    var controlValue = c.formValues[controlField];
+
+    // Boolean (checkbox) dependency
+    if (typeof controlValue === 'boolean') {
+      return controlValue === dependency.showWhen;
+    }
+
+    // Choice (dropdown) dependency — show only when value matches
+    if (typeof controlValue === 'string') {
+      return controlValue === dependency.showWhen;
+    }
+
+    return true;
+  };
 
   // Client Script (Controller or Widget Client Controller)
   angular.module('sn.$sp').directive('fileModel', ['$parse', function ($parse) {
@@ -104,6 +132,7 @@ function($scope, spUtil) {
   };
 
   // Validate current phase fields
+  // Validate current phase fields
   c.validateCurrentPhase = function() {
     c.validationErrors = [];
     var currentFields = c.phases[c.currentPhase].fields;
@@ -113,8 +142,13 @@ function($scope, spUtil) {
       var field = $scope.data.f._fields[fieldName];
       if (!field) return;
       
+      // ONLY validate fields that are currently visible
+      if (!c.shouldShowField(fieldName)) {
+        return; // Skip validation for hidden fields
+      }
+      
       // Check mandatory fields
-      if (field.mandatory || field.sys_mandatory) {
+      if (field.mandatory || field.sys_mandatory || c.initialMandatoryFields.includes(fieldName)) {
         var value = c.formValues[fieldName];
         if (!value || value === '' || value === null) {
           c.validationErrors.push({
@@ -623,7 +657,7 @@ function($scope, spUtil) {
   
 }]]></link>
         <name>Widget Form - HCK</name>
-        <option_schema>[{"name":"phases","section":"data","default_value":"","label":"Phases Configuration","type":"string"},{"name":"images","section":"data","default_value":"","label":"Images Fields","type":"string"},{"name":"currencies","section":"data","default_value":"","label":"Currency Fields","type":"string"}]</option_schema>
+        <option_schema>[{"name":"phases","section":"data","default_value":"","label":"Phases Configuration","type":"string"},{"name":"images","section":"data","default_value":"","label":"Images Fields","type":"string"},{"name":"currencies","section":"data","default_value":"","label":"Currency Fields","type":"string"},{"name":"mandatory_fields","section":"data","default_value":"","label":"Mandatory Fields","type":"string"},{"name":"field_dependencies","section":"data","default_value":"","label":"Dependencies Fields","type":"string"}]</option_schema>
         <public>false</public>
         <roles/>
         <script><![CDATA[// Server Script
@@ -634,11 +668,24 @@ function($scope, spUtil) {
     var table = options.table || "x_1097288_hacktaho_hackathon_registration";
     var sysId = options.sys_id || "-1";
     var view = options.view || "sp";
+    var initialMandatoryFields = options.mandatory_fields;
+
     data.table = table;
+    data.initialMandatoryFields = initialMandatoryFields.split(",");
+
+    // Configure field dependencies from widget options
+    if (options.field_dependencies) {
+      try {
+        data.fieldDependencies = JSON.parse(options.field_dependencies);
+      } catch (e) {
+        data.fieldDependencies = {};
+      }
+    } else {
+      data.fieldDependencies = {};
+    }
 
     // Get form structure using $sp.getForm
     data.f = $sp.getForm(table, sysId, view);
-    gs.info(JSON.stringify(data.f));
 
     if (options.phases) {
       phases = JSON.parse(options.phases);
@@ -673,7 +720,6 @@ function($scope, spUtil) {
   // Handle form submission
   if (input.action == "submit_form") {
     try {
-      gs.info(JSON.stringify(input.submitData));
       var submitData = input.submitData;
       var table = submitData.table;
       var sysId = submitData.sys_id;
@@ -849,14 +895,14 @@ function($scope, spUtil) {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2025-10-01 07:02:44</sys_created_on>
         <sys_id>4a7ce3b1c3543210a4e87205e40131e5</sys_id>
-        <sys_mod_count>302</sys_mod_count>
+        <sys_mod_count>348</sys_mod_count>
         <sys_name>Widget Form - HCK</sys_name>
         <sys_package display_value="Hacktahon" source="x_1097288_hacktaho">8a18966a474fe2105446f19f016d4370</sys_package>
         <sys_policy/>
         <sys_scope display_value="Hacktahon">8a18966a474fe2105446f19f016d4370</sys_scope>
         <sys_update_name>sp_widget_4a7ce3b1c3543210a4e87205e40131e5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2025-10-06 06:25:49</sys_updated_on>
+        <sys_updated_on>2025-10-06 15:37:21</sys_updated_on>
         <template><![CDATA[<!-- ServiceNow Widget HTML Template -->
 <div class="phase-widget-container">
   
@@ -888,10 +934,10 @@ function($scope, spUtil) {
         <div ng-if="data.f._fields[fieldName]">
           
            <!-- String/Text Input - Single Line (max_length <= 160) -->
-          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length <= 160">
+          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length <= 160 && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <input type="text" 
                    class="form-control"
@@ -905,10 +951,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- String/Text Input - Multi Line (max_length > 160) -->
-          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length > 160">
+          <div ng-if="data.f._fields[fieldName].type === 'string' && data.f._fields[fieldName].max_length > 160 && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <textarea class="form-control"
                       rows="5"
@@ -925,10 +971,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Choice/Select Dropdown -->
-          <div ng-if="data.f._fields[fieldName].type === 'choice'">
+          <div ng-if="data.f._fields[fieldName].type === 'choice' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <select class="form-control select-dropdown"
                     ng-model="c.formValues[fieldName]"
@@ -941,10 +987,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Reference Field (Autocomplete) -->
-          <div ng-if="data.f._fields[fieldName].type === 'reference'">
+          <div ng-if="data.f._fields[fieldName].type === 'reference' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory || data.f._fields[fieldName].sys_mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.f._fields[fieldName].sys_mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <sn-record-picker 
               field="c.formValues[fieldName]" 
@@ -961,13 +1007,13 @@ function($scope, spUtil) {
           </div>
 
           <!-- Boolean/Checkbox -->
-          <div ng-if="data.f._fields[fieldName].type === 'boolean'">
+          <div ng-if="data.f._fields[fieldName].type === 'boolean' && c.shouldShowField(fieldName)">
             <label class="field-label checkbox-label">
               <input type="checkbox" 
                      ng-model="c.formValues[fieldName]"
                      ng-disabled="data.f._fields[fieldName].readonly">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <small ng-if="data.f._fields[fieldName].hint" class="field-hint">
               {{data.f._fields[fieldName].hint}}
@@ -975,10 +1021,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Integer Input -->
-          <div ng-if="data.f._fields[fieldName].type === 'integer'">
+          <div ng-if="data.f._fields[fieldName].type === 'integer' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <input type="number" 
                    class="form-control"
@@ -991,10 +1037,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Textarea -->
-          <div ng-if="data.f._fields[fieldName].type === 'journal' || data.f._fields[fieldName].type === 'html'">
+          <div ng-if="data.f._fields[fieldName].type === 'journal' || data.f._fields[fieldName].type === 'html' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory  || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <sp-tinymce-editor 
               ng-model="c.formValues[fieldName]" 
@@ -1012,10 +1058,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Date Picker -->
-          <div ng-if="data.f._fields[fieldName].type === 'glide_date'">
+          <div ng-if="data.f._fields[fieldName].type === 'glide_date' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <input type="date" 
                    class="form-control"
@@ -1028,10 +1074,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- DateTime Picker -->
-          <div ng-if="data.f._fields[fieldName].type === 'glide_date_time'">
+          <div ng-if="data.f._fields[fieldName].type === 'glide_date_time' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <input type="datetime-local" 
                    class="form-control"
@@ -1044,10 +1090,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Image Upload -->
-          <div ng-if="data.f._fields[fieldName].type === 'user_image'">
+          <div ng-if="data.f._fields[fieldName].type === 'user_image' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
 
             <!-- Custom button -->
@@ -1076,10 +1122,10 @@ function($scope, spUtil) {
           </div>
 
           <!-- Currency Field -->
-          <div ng-if="data.f._fields[fieldName].type === 'currency'">
+          <div ng-if="data.f._fields[fieldName].type === 'currency' && c.shouldShowField(fieldName)">
             <label class="field-label">
               {{data.f._fields[fieldName].label}}
-              <span ng-if="data.f._fields[fieldName].mandatory" class="mandatory-indicator">*</span>
+              <span ng-if="data.f._fields[fieldName].mandatory || data.initialMandatoryFields.includes(fieldName)" class="mandatory-indicator">*</span>
             </label>
             <div class="currency-input-group">
               <select ng-model="c.formValues[fieldName].currency" class="form-control currency-select select-dropdown">
